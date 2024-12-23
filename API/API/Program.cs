@@ -1,4 +1,4 @@
-using API.Controllers;
+using API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
-// builder.Services.AddSingleton<WebSocketController>();
+builder.Services.AddTransient<WebSocketClientService>();
 
 var app = builder.Build();
 

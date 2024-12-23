@@ -31,3 +31,4 @@
 /home/ryan/repos/shareable-text-editor/API/API/obj/Debug/net9.0/API.pdb
 /home/ryan/repos/shareable-text-editor/API/API/obj/Debug/net9.0/API.genruntimeconfig.cache
 /home/ryan/repos/shareable-text-editor/API/API/obj/Debug/net9.0/ref/API.dll
+/home/ryan/repos/shareable-text-editor/API/API/obj/Debug/net9.0/API.sourcelink.json
