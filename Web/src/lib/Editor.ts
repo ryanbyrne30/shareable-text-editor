@@ -54,6 +54,8 @@ export class Editor {
 		config.blinkerCanvas.addEventListener('mousedown', (e) => {
 			this.onClick(e.clientX, e.clientY);
 		});
+
+		config.blinkerCanvas.addEventListener('mousemove', (e) => {});
 	}
 
 	moveBlinker = () => {
@@ -67,15 +69,21 @@ export class Editor {
 	};
 
 	onClick = (clickX: number, clickY: number) => {
-		setTimeout(() => {
-			this.textarea.focus();
-			const charPos = this.editor.getTextCharPosForCell(this.cursorRow, this.cursorCol);
-			this.textarea.setSelectionRange(charPos, charPos);
-		}, 0);
 		const cell = this.layout.screenPosToCell(clickX, clickY);
 		const targetCell = this.editor.getNearestTextCellToCell(cell.row, cell.col);
 		const targetChar = this.editor.getTextCharPosForCell(targetCell.row, targetCell.col);
 		setTimeout(() => {
+			this.textarea.focus();
+			this.textarea.setSelectionRange(targetChar, targetChar);
+		}, 0);
+	};
+
+	onDrag = (clickX: number, clickY: number) => {
+		const cell = this.layout.screenPosToCell(clickX, clickY);
+		const targetCell = this.editor.getNearestTextCellToCell(cell.row, cell.col);
+		const targetChar = this.editor.getTextCharPosForCell(targetCell.row, targetCell.col);
+		setTimeout(() => {
+			this.textarea.focus();
 			this.textarea.setSelectionRange(targetChar, targetChar);
 		}, 0);
 	};
