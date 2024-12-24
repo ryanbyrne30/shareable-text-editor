@@ -42,6 +42,14 @@ export class TextContainer implements ITextContainer {
 		return text;
 	};
 
+	getCurrentSelection = (): { start: Cell; end: Cell } => {
+		const startPos = this.textarea.selectionStart;
+		const endPos = this.textarea.selectionEnd;
+		const start = this.charPosToCell(startPos);
+		const end = this.charPosToCell(endPos);
+		return { start, end };
+	};
+
 	charPosToCell = (pos: number): Cell => {
 		const lines = this.getText();
 		let count = pos;
@@ -53,14 +61,25 @@ export class TextContainer implements ITextContainer {
 		return { row: lines.length - 1, col: lines[lines.length - 1].length };
 	};
 
+	selectionCells = (start: number, end: number): Cell[] => {
+		const positions: number[] = [];
+		for (let i = start; i < end; i++) positions.push(i);
+		return positions.map(this.charPosToCell);
+	};
+
 	onSelectionChange = () => {
 		this.textarea.selectionDirection;
-		const start = this.charPosToCell(this.textarea.selectionStart);
-		const end = this.charPosToCell(this.textarea.selectionEnd);
+		const startPos = this.textarea.selectionStart;
+		const endPos = this.textarea.selectionEnd;
+		const start = this.charPosToCell(startPos);
+		const end = this.charPosToCell(endPos);
+		const direction = this.textarea.selectionDirection;
+		const selection = this.selectionCells(startPos, endPos);
 		this.onSelectionChangeCb({
 			selectionStart: start,
 			selectionEnd: end,
-			direction: this.textarea.selectionDirection
+			selection: selection,
+			direction: direction
 		});
 	};
 
@@ -84,5 +103,14 @@ export class TextContainer implements ITextContainer {
 		document.removeEventListener('keydown', this.onKeydown);
 		this.textarea.removeEventListener('selectionchange', this.onSelectionChange);
 		this.textarea.removeEventListener('input', this.onInput);
+	};
+
+	cellsBetween = (start: Cell, end: Cell) => {
+		let left = start;
+		let right = end;
+		if (end.row < start.row || (end.row === start.row && end.col < start.col)) {
+			left = end;
+			right = start;
+		}
 	};
 }

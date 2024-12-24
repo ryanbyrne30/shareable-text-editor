@@ -3,6 +3,7 @@ import type { Cell } from '$lib/textEditor/types/Cell';
 export type OnSelectionChangeCallback = (args: {
 	selectionStart: Cell;
 	selectionEnd: Cell;
+	selection: Cell[];
 	direction: 'forward' | 'backward' | 'none';
 }) => void;
 

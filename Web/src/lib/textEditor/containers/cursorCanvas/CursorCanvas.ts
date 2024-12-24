@@ -27,7 +27,7 @@ export class CursorCanvas implements ICursorCanvas {
 
 	height = () => {
 		const dims = this.grid.dimensions();
-		return dims.rowHeight + dims.rowPadding;
+		return (dims.rowHeight + dims.rowPadding) * 1.1;
 	};
 
 	draw = () => {
@@ -47,6 +47,29 @@ export class CursorCanvas implements ICursorCanvas {
 	move = (cell: Cell): void => {
 		this.stopBlinking();
 		this.curCell = cell;
+		this.startBlinking();
+	};
+
+	select = (cells: Cell[], direction: number, opts?: { style?: string }): void => {
+		this.stopBlinking();
+		if (cells.length === 0) return this.move(this.curCell);
+		const { colWidth } = this.grid.dimensions();
+		for (let cell of cells) {
+			const coord = this.grid.cellToCanvasCoord(cell);
+			this.canvas.drawRect(coord.x, coord.y, colWidth, this.height(), opts);
+		}
+
+		if (cells.length === 1 && direction < 0) {
+			this.curCell = cells[0];
+		} else if (cells.length === 1) {
+			const cell = cells[0];
+			this.curCell = { ...cell, col: cell.col + 1 };
+		} else if (cells.length > 1 && direction < 0) {
+			this.curCell = cells[0];
+		} else if (cells.length > 1) {
+			const lastCell = cells[cells.length - 1];
+			this.curCell = { ...lastCell, col: lastCell.col + 1 };
+		}
 		this.startBlinking();
 	};
 

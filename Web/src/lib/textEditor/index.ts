@@ -1,9 +1,9 @@
 import { Canvas } from './components/canvas/Canvas';
 import { Grid } from './components/grid/Grid';
 import { TextContainer } from './containers/textContainer/TextContainer';
-import { EditorController } from './controllers/EditorController';
-import { CursorCanvas } from './hoc/cursorCanvas/CursorCanvas';
-import { TextCanvas } from './hoc/textCanvas/TextCanvas';
+import { EditorContainer } from './containers/editorContainer/EditorContainer';
+import { CursorCanvas } from './containers/cursorCanvas/CursorCanvas';
+import { TextCanvas } from './containers/textCanvas/TextCanvas';
 
 export function NewEditor(args: {
 	textarea: HTMLTextAreaElement;
@@ -11,7 +11,7 @@ export function NewEditor(args: {
 	cursorCanvas: HTMLCanvasElement;
 	paddingX?: number;
 	paddingY?: number;
-}): EditorController {
+}): EditorContainer {
 	const grid = new Grid({
 		canvas: args.textCanvas,
 		canvasPaddingX: args.paddingX,
@@ -35,7 +35,7 @@ export function NewEditor(args: {
 		textarea: args.textarea
 	});
 
-	return new EditorController({
+	return new EditorContainer({
 		cursorCanvas,
 		textCanvas,
 		textContainer

@@ -1,3 +1,4 @@
+import type { Cell } from '$lib/textEditor/types/Cell';
 import type { OnInputCallback, OnKeydownCallback, OnSelectionChangeCallback } from './types';
 
 export interface ITextContainer {
@@ -6,4 +7,5 @@ export interface ITextContainer {
 	setOnSelectionChange(cb: OnSelectionChangeCallback): void;
 	setOnInput(cb: OnInputCallback): void;
 	focus(): void;
+	getCurrentSelection(): { start: Cell; end: Cell };
 }
