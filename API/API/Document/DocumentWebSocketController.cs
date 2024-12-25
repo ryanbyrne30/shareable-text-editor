@@ -5,13 +5,13 @@ namespace API.Document;
 
 public class DocumentWebSocketController(DocumentClientService clientService): ControllerBase
 {
-    [Route("/doc")]
-    public async Task Get()
+    [Route("/doc/{docId}")]
+    public async Task Get(string docId)
     {
         if (HttpContext.WebSockets.IsWebSocketRequest)
         {
             var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
-            await clientService.HandleClient(webSocket);
+            await clientService.HandleClient(docId, webSocket);
         }
         else
         {

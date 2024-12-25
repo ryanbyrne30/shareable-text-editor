@@ -3,13 +3,15 @@
 	import { onMount } from 'svelte';
 	import { twMerge } from 'tailwind-merge';
 
+	let { data } = $props();
+
 	let textarea: HTMLTextAreaElement | null = null;
 	let editorCanvas: HTMLCanvasElement | null = null;
 	let blinkerCanvas: HTMLCanvasElement;
 
 	function setup() {
 		if (!editorCanvas || !blinkerCanvas || !textarea) return;
-		NewEditor(textarea);
+		NewEditor(data.id ?? '', textarea);
 	}
 
 	onMount(() => {
