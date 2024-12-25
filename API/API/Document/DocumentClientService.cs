@@ -9,14 +9,15 @@ public class DocumentClientService
 {
     public async Task HandleClient(string docId, WebSocket webSocket)
     {
-        var client = CreateClient(docId, webSocket);
+        var client = CreateClient(webSocket);
+        Console.WriteLine($"Doc [{docId}]: New client {client.Id}");
         DocumentService.NewClient(docId, client);
         var result = await HandleMessages(docId, client);
         await webSocket.CloseAsync(result.CloseStatus ?? WebSocketCloseStatus.Empty, result.CloseStatusDescription, CancellationToken.None);
         DocumentService.RemoveClient(docId, client);
     }
 
-    private static DocumentClient CreateClient(string docId, WebSocket webSocket)
+    private static DocumentClient CreateClient(WebSocket webSocket)
     {
         return new DocumentClient
         {
@@ -52,20 +53,48 @@ public class DocumentClientService
             var action = ParseMessage(message);
             if (action != null)
             {
-                await HandleNewAction(docId, client, action);
+                action.Client = client;
+                Console.WriteLine($"Received action from client [{client.Id}]: {action.ToString()}");
+                DocumentService.NewAction(docId, action);
             }
             result = await ReceiveAsync(client.WebSocket, buffer); 
         }
 
         return result;
     }
-
-    private async Task HandleNewAction(string docId, DocumentClient client, DocumentAction action)
+    
+    public static async Task BroadcastAction(string docId, DocumentAction action)
     {
-            Console.WriteLine($"Received action: {action.ToString()}");
-            var sendMessage = "Received action: " + action.ToString();
-            var sendBytes = Encoding.UTF8.GetBytes(sendMessage);
-            await client.WebSocket.SendAsync(new ArraySegment<byte>(sendBytes, 0, sendBytes.Length), WebSocketMessageType.Text,
-                true, CancellationToken.None);
+        var clients = DocumentService.GetDocumentClients(docId);
+        foreach (var client in clients)
+        {
+            if (client.WebSocket.State == WebSocketState.Closed) continue;
+            if (client.Id == action.Client?.Id) await AcknowledgeClient(docId, client);
+            else await SendAction(client, action);
+        }
+    }
+
+    private static async Task AcknowledgeClient(string docId, DocumentClient client)
+    {
+        Console.WriteLine($"Acknowledging client {client.Id}");
+        var response = new DocumentResponse
+        {
+            Ack = new DocumentResponse.Acknowledgement
+            {
+                Success = true,
+                Version = DocumentService.GetDocumentVersion(docId)
+            }
+        };
+        var json = JsonSerializer.Serialize(response);
+        var bytes = Encoding.UTF8.GetBytes(json);
+        await client.WebSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
+    }
+    
+    private static async Task SendAction(DocumentClient client, DocumentAction action)
+    {
+        Console.WriteLine($"Sending action to {client.Id}");
+        var json = JsonSerializer.Serialize(action);
+        var bytes = Encoding.UTF8.GetBytes(json);
+        await client.WebSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
     }
 }

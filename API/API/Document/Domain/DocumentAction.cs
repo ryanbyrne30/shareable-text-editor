@@ -4,17 +4,36 @@ namespace API.Document.Domain;
 
 public class DocumentAction
 {
-    [JsonPropertyName("a")]
-    public int RetainAfter { get; set; } 
+    [JsonIgnore]
+    public DocumentClient? Client { get; set; }
     
-    [JsonPropertyName("b")]
-    public int RetainBefore { get; set; } 
+    [JsonPropertyName("revision")]
+    public int Revision{ get; set; } 
     
-    [JsonPropertyName("i")]
+    [JsonPropertyName("pos")]
+    public int Position{ get; set; } 
+    
+    [JsonPropertyName("insert")]
     public string? Insert { get; set; } 
     
-    [JsonPropertyName("d")]
+    [JsonPropertyName("delete")]
     public int? Delete { get; set; } 
     
-    public string ToString() => $"[RetainAfter: {RetainAfter}, RetainBefore: {RetainBefore}, Insert: {Insert}, Delete: {Delete}]";
+    public new string ToString()
+    {
+        return $"Revision: {Revision}, Position: {Position}, Insert: {Insert}, Delete: {Delete}";
+    }
+    
+    public bool IsInsert()
+    {
+        return Insert != null && Delete == null;
+    }
+    public bool IsDelete()
+    {
+        return Insert == null && Delete != null;
+    }
+    public bool IsUpdate()
+    {
+        return Insert != null && Delete != null;
+    }
 }

@@ -5,4 +5,6 @@ public class Document
     public required string Id { get; set; }
     public string Content { get; set; } = "";
     public List<DocumentClient> Clients { get; set; } = [];
+    public List<DocumentAction> CompletedActions { get; set; } = [];
+    public List<DocumentAction> PendingActions { get; set; } = [];
 }

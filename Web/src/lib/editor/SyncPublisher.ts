@@ -8,6 +8,7 @@ export class SyncPublisher {
 	constructor(private socket: SyncSocket) {}
 
 	publish = async (action: TextAction) => {
+		console.log('Adding action to queue:', action);
 		this.queue.unshift(action);
 		if (this.mutex) return;
 		this.mutex = true;
@@ -20,7 +21,8 @@ export class SyncPublisher {
 			this.mutex = false;
 			return;
 		}
-		await this.socket.send(action.toString());
+		console.log('Sending action to server:', action);
+		await this.socket.send(JSON.stringify(action));
 		this.#sync();
 	};
 }

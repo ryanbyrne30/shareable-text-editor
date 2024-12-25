@@ -1,13 +1,12 @@
-import type { SyncPublisher } from './SyncPublisher';
-import { TextAction } from './TextAction';
+export type OnChangeFromSelectionCallback = (start: number, end: number, key: string) => void;
+export type OnChangeFromNonSelectionCallback = (pos: number, key: string) => void;
 
 export class TextContainer {
 	private isMouseDown = false;
+	private onChangeFromSelection: OnChangeFromSelectionCallback[] = [];
+	private onChangeFromNonSelection: OnChangeFromNonSelectionCallback[] = [];
 
-	constructor(
-		private textarea: HTMLTextAreaElement,
-		private publisher: SyncPublisher
-	) {
+	constructor(private textarea: HTMLTextAreaElement) {
 		this.setup();
 	}
 
@@ -41,6 +40,18 @@ export class TextContainer {
 		return this.textarea.value;
 	};
 
+	setText = (text: string): void => {
+		this.textarea.value = text;
+	};
+
+	addChangeFromSelection = (cb: OnChangeFromSelectionCallback) => {
+		this.onChangeFromSelection.push(cb);
+	};
+
+	addChangeFromNonSelection = (cb: OnChangeFromNonSelectionCallback) => {
+		this.onChangeFromNonSelection.push(cb);
+	};
+
 	#updateCursor = () => {
 		// console.log('Update cursor UI:', this.getSelection());
 	};
@@ -61,25 +72,19 @@ export class TextContainer {
 
 	#onKeyDown = (e: KeyboardEvent) => {
 		this.#updateCursor();
-		this.#createAction(e);
+		this.#handleAction(e);
 	};
 
-	#createAction = (e: KeyboardEvent) => {
+	#handleAction = (e: KeyboardEvent) => {
 		const selection = this.getSelection();
-
-		let action: TextAction | null = null;
-		if (selection.start < selection.end)
-			action = TextAction.fromSelection(
-				selection.start,
-				selection.end,
-				this.getText().length,
-				e.key
-			);
-		else {
-			action = TextAction.fromNonSelection(selection.start, this.getText().length, e.key);
+		if (selection.start < selection.end) {
+			for (let cb of this.onChangeFromSelection) {
+				cb(selection.start, selection.end, e.key);
+			}
+		} else {
+			for (let cb of this.onChangeFromNonSelection) {
+				cb(selection.start, e.key);
+			}
 		}
-
-		if (action === null) return;
-		this.publisher.publish(action);
 	};
 }

@@ -1,30 +1,11 @@
-export type InsertAction = {
-	retainBefore: number;
-	insert: string;
-	retainAfter: number;
+export type TextAction = {
+	revision: number;
+	pos: number;
+	insert?: string;
+	delete?: number;
 };
 
-export type DeleteAction = {
-	retainBefore: number;
-	delete: number;
-	retainAfter: number;
-};
-
-export type UpdateAction = {
-	retainBefore: number;
-	delete: number;
-	insert: string;
-	retainAfter: number;
-};
-
-type ActionType = {
-	a: number;
-	b: number;
-	i?: string;
-	d?: number;
-};
-
-export const nonTextKeys = [
+export const NON_TEXT_KEYS = [
 	'Escape',
 	'F1',
 	'F2',
@@ -61,105 +42,3 @@ export const nonTextKeys = [
 	'PrintScreen',
 	'ContextMenu'
 ];
-
-export type TextActionType = InsertAction | DeleteAction | UpdateAction;
-
-export class TextAction {
-	constructor(private action: TextActionType) {}
-
-	public static fromSelection = (
-		start: number,
-		end: number,
-		textLength: number,
-		keyPressed: string
-	): TextAction | null => {
-		const retainBefore = start;
-		const deleted = end - start;
-		const retainAfter = textLength - end;
-
-		const deleteAction: DeleteAction = {
-			retainBefore,
-			delete: deleted,
-			retainAfter
-		};
-		if (keyPressed === 'Backspace' || keyPressed === 'Delete') return new TextAction(deleteAction);
-
-		if (nonTextKeys.includes(keyPressed)) return null;
-
-		const updateAction: UpdateAction = {
-			retainBefore,
-			delete: deleted,
-			insert: keyPressed,
-			retainAfter
-		};
-		return new TextAction(updateAction);
-	};
-
-	public static fromNonSelection = (
-		pos: number,
-		textLength: number,
-		keyPressed: string
-	): TextAction | null => {
-		if (keyPressed === 'Backspace') {
-			const deleteAction: DeleteAction = {
-				retainBefore: pos - 1,
-				delete: 1,
-				retainAfter: textLength - pos
-			};
-			return new TextAction(deleteAction);
-		}
-
-		if (keyPressed === 'Delete' && textLength === pos) {
-			return null;
-		}
-
-		if (keyPressed === 'Delete') {
-			const deleteAction: DeleteAction = {
-				retainBefore: pos,
-				delete: 1,
-				retainAfter: textLength - pos - 1
-			};
-			return new TextAction(deleteAction);
-		}
-
-		if (nonTextKeys.includes(keyPressed)) return null;
-
-		const insertAction: InsertAction = {
-			retainBefore: pos,
-			insert: keyPressed,
-			retainAfter: textLength - pos
-		};
-		return new TextAction(insertAction);
-	};
-
-	#toActionType = (): ActionType => {
-		const a = this.action;
-
-		if ('insert' in a && 'delete' in a) {
-			return {
-				a: a.retainAfter,
-				b: a.retainBefore,
-				i: a.insert,
-				d: a.delete
-			};
-		} else if ('delete' in a) {
-			return {
-				a: a.retainAfter,
-				b: a.retainBefore,
-				d: a.delete
-			};
-		} else if ('insert' in a) {
-			return {
-				a: a.retainAfter,
-				b: a.retainBefore,
-				i: a.insert
-			};
-		} else {
-			throw new Error('Invalid action');
-		}
-	};
-
-	toString = (): string => {
-		return JSON.stringify(this.#toActionType());
-	};
-}
