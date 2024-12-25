@@ -17,6 +17,13 @@ export type UpdateAction = {
 	retainAfter: number;
 };
 
+type ActionType = {
+	a: number;
+	b: number;
+	i?: string;
+	d?: number;
+};
+
 export const nonTextKeys = [
 	'Escape',
 	'F1',
@@ -123,5 +130,36 @@ export class TextAction {
 			retainAfter: textLength - pos
 		};
 		return new TextAction(insertAction);
+	};
+
+	#toActionType = (): ActionType => {
+		const a = this.action;
+
+		if ('insert' in a && 'delete' in a) {
+			return {
+				a: a.retainAfter,
+				b: a.retainBefore,
+				i: a.insert,
+				d: a.delete
+			};
+		} else if ('delete' in a) {
+			return {
+				a: a.retainAfter,
+				b: a.retainBefore,
+				d: a.delete
+			};
+		} else if ('insert' in a) {
+			return {
+				a: a.retainAfter,
+				b: a.retainBefore,
+				i: a.insert
+			};
+		} else {
+			throw new Error('Invalid action');
+		}
+	};
+
+	toString = (): string => {
+		return JSON.stringify(this.#toActionType());
 	};
 }

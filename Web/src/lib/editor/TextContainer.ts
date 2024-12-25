@@ -1,9 +1,13 @@
+import type { SyncPublisher } from './SyncPublisher';
 import { TextAction } from './TextAction';
 
 export class TextContainer {
 	private isMouseDown = false;
 
-	constructor(private textarea: HTMLTextAreaElement) {
+	constructor(
+		private textarea: HTMLTextAreaElement,
+		private publisher: SyncPublisher
+	) {
 		this.setup();
 	}
 
@@ -75,6 +79,7 @@ export class TextContainer {
 			action = TextAction.fromNonSelection(selection.start, this.getText().length, e.key);
 		}
 
-		console.log('Action:', action);
+		if (action === null) return;
+		this.publisher.publish(action);
 	};
 }

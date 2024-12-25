@@ -1,4 +1,5 @@
-using API.Services;
+using API.ChatRoom.Services;
+using API.Document;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddTransient<WebSocketClientService>();
+
+builder.Services.AddTransient<DocumentClientService>();
 
 var app = builder.Build();
 

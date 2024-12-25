@@ -1,7 +1,7 @@
 using System.Net.WebSockets;
-using API.Domain;
+using API.ChatRoom.Domain;
 
-namespace API.Services;
+namespace API.ChatRoom.Services;
 
 public class WebSocketClientService
 {

@@ -1,17 +1,17 @@
-using API.Services;
+using API.ChatRoom.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers;
+namespace API.Document; 
 
-public class WebSocketController(WebSocketClientService clientService): ControllerBase
+public class DocumentWebSocketController(DocumentClientService clientService): ControllerBase
 {
-    [Route("/ws/{chatId}")]
-    public async Task Get(string chatId)
+    [Route("/doc")]
+    public async Task Get()
     {
         if (HttpContext.WebSockets.IsWebSocketRequest)
         {
             var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
-            await clientService.HandleClient(chatId, webSocket);
+            await clientService.HandleClient(webSocket);
         }
         else
         {

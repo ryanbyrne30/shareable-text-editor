@@ -1,4 +1,4 @@
-namespace API.Domain;
+namespace API.ChatRoom.Domain;
 
 public class ChatMessage
 {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { TextContainer } from '$lib/editor/TextContainer';
+	import { NewEditor } from '$lib/editor';
 	import { onMount } from 'svelte';
 	import { twMerge } from 'tailwind-merge';
 
@@ -9,7 +9,7 @@
 
 	function setup() {
 		if (!editorCanvas || !blinkerCanvas || !textarea) return;
-		const textContainer = new TextContainer(textarea);
+		NewEditor(textarea);
 	}
 
 	onMount(() => {
