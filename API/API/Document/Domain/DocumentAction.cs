@@ -36,4 +36,21 @@ public class DocumentAction
     {
         return Insert != null && Delete != null;
     }
+    
+    public string Apply(string document)
+    {
+        if (Insert != null && Delete == null)
+        {
+            return document.Insert(Position, Insert);
+        }
+        if (Delete != null && Insert == null)
+        {
+            return document.Remove(Position, Delete.Value);
+        }
+        if (Insert != null && Delete != null)
+        {
+            return document.Remove(Position, Delete.Value).Insert(Position, Insert);
+        }
+        return document;
+    }
 }

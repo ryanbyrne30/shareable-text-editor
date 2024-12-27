@@ -21,9 +21,7 @@ public static class DocumentStateManager
     private static void ApplyAction(string docId, DocumentAction action)
     {
         var version = DocumentService.GetDocumentVersion(docId);
-        if (version < action.Revision && action.IsInsert()) DocumentService.Insert(docId, action.Position, action.Insert ?? "");
-        else if (version < action.Revision && action.IsDelete()) DocumentService.Delete(docId, action.Position, action.Delete ?? 0);
-        else if (version < action.Revision && action.IsUpdate()) DocumentService.Replace(docId, action.Position, action.Delete ?? 0, action.Insert ?? "");
+        if (version < action.Revision) DocumentService.ApplyAction(docId, action);
         else
         {
             Console.WriteLine($"Unhandled condition for action. Current version: {version}. Action: {action.ToString()}");

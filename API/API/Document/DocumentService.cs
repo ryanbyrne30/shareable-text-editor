@@ -21,6 +21,11 @@ public static class DocumentService
         Task.Run(() => DocumentStateManager.Run(newDocument.Id));
         return newDocument;
     }
+
+    public static void Clear()
+    {
+        Documents.Clear();
+    }
     
     public static void NewClient(string documentId, DocumentClient client)
     {
@@ -72,28 +77,14 @@ public static class DocumentService
         document.CompletedActions.Add(action);
         document.PendingActions.Remove(action);
     }
-
-    public static void Insert(string docId, int pos, string text)
-    {
-        var document = GetOrCreateDocument(docId);
-        var content = document.Content;
-        document.Content = content.Insert(pos, text);
-    }
-
-    public static void Delete(string docId, int pos, int length)
-    {
-        var document = GetOrCreateDocument(docId);
-        var content = document.Content;
-        document.Content = content.Remove(pos, length);
-    }
     
-    public static void Replace(string docId, int pos, int length, string text)
+    public static void ApplyAction(string docId, DocumentAction action)
     {
         var document = GetOrCreateDocument(docId);
         var content = document.Content;
-        document.Content = content.Remove(pos, length).Insert(pos, text);
+        document.Content = action.Apply(content);
     }
-    
+
     public static List<DocumentClient> GetDocumentClients(string docId)
     {
         return Documents.TryGetValue(docId, out var document) ? document.Clients : [];
