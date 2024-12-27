@@ -12,19 +12,16 @@ public static class DocumentStateManager
         {
             var pending = DocumentService.GetNextPendingDocumentAction(docId);
             if (pending == null) continue;
-            ApplyAction(docId, pending);
-            DocumentService.ResolvePendingDocumentAction(docId, pending);
-            await DocumentClientService.BroadcastAction(docId, pending);
+            var transformed = ApplyAction(docId, pending);
+            await DocumentClientService.BroadcastAction(docId, transformed);
         }
     }
     
-    private static void ApplyAction(string docId, DocumentAction action)
+    private static DocumentAction ApplyAction(string docId, DocumentAction action)
     {
-        var version = DocumentService.GetDocumentVersion(docId);
-        if (version < action.Revision) DocumentService.ApplyAction(docId, action);
-        else
-        {
-            Console.WriteLine($"Unhandled condition for action. Current version: {version}. Action: {action.ToString()}");
-        }
+        var completedActions = DocumentService.GetCompletedDocumentActions(docId);
+        var newAction = OperationalTransformation.Transform(action, completedActions);
+        DocumentService.ApplyAction(docId, newAction);
+        return newAction;
     }
 }

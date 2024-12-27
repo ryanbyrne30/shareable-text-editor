@@ -71,18 +71,13 @@ public static class DocumentService
         return Documents.TryGetValue(documentId, out var document) ? document.CompletedActions : [];
     }
     
-    public static void ResolvePendingDocumentAction(string documentId, DocumentAction action)
-    {
-        if (!Documents.TryGetValue(documentId, out var document)) return;
-        document.CompletedActions.Add(action);
-        document.PendingActions.Remove(action);
-    }
-    
     public static void ApplyAction(string docId, DocumentAction action)
     {
         var document = GetOrCreateDocument(docId);
         var content = document.Content;
         document.Content = action.Apply(content);
+        document.CompletedActions.Add(action);
+        document.PendingActions.Remove(action);
     }
 
     public static List<DocumentClient> GetDocumentClients(string docId)
