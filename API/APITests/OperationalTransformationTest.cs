@@ -5,11 +5,6 @@ namespace APITests;
 
 public class Tests
 {
-    [SetUp]
-    public void Setup()
-    {
-    }
-
     private static DocumentAction CreateAction(int pos, string? insert, int? delete)
     {
         return new DocumentAction(0, pos, insert, delete);
