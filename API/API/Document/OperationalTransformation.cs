@@ -15,7 +15,7 @@ public static class OperationalTransformation
         return transformedAction;
     }
 
-    public static DocumentAction TransformAction(DocumentAction newAction, DocumentAction oldAction)
+    private static DocumentAction TransformAction(DocumentAction newAction, DocumentAction oldAction)
     {
         if (newAction.IsInsert() && oldAction.IsInsert()) return InsertOverInsert(newAction, oldAction);
         if (newAction.IsInsert() && oldAction.IsDelete()) return InsertOverDelete(newAction, oldAction);
@@ -31,65 +31,42 @@ public static class OperationalTransformation
     
     public static DocumentAction InsertOverInsert(DocumentAction newAction, DocumentAction oldAction)
     {
-        if (newAction.Position < oldAction.Position) return new DocumentAction
-        {
-            Client = newAction.Client,
-            Insert = newAction.Insert,
-            Position = newAction.Position, 
-            Revision = oldAction.Revision + 1,
-        };
+        var revision = oldAction.Revision + 1;
+        var client = newAction.Client;
+        
+        if (newAction.Position < oldAction.Position) return new DocumentAction(revision, newAction.Position, newAction.Insert, null, client);
         
         var oldInsertLength = oldAction.Insert?.Length ?? 0;
         var newPosition = newAction.Position + oldInsertLength;
-        return new DocumentAction
-        {
-            Client = newAction.Client,
-            Insert = newAction.Insert,
-            Position = newPosition,
-            Revision = oldAction.Revision + 1,
-        };
+        return new DocumentAction(revision, newPosition, newAction.Insert, null, client);
     }
     
     public static DocumentAction DeleteOverInsert(DocumentAction newAction, DocumentAction oldAction)
     {
+        var revision = oldAction.Revision + 1;
+        var client = newAction.Client;
         var deleteLength = newAction.Delete ?? 0;
         var insertLength = oldAction.Insert?.Length ?? 0;
             
         if (newAction.Position >= oldAction.Position)
         {
 
-            var newPosition = newAction.Position + insertLength; 
-            return new DocumentAction
-            {
-                Client = newAction.Client,
-                Delete = deleteLength,
-                Position = newPosition,
-                Revision = oldAction.Revision + 1,
-            };
+            var newPosition = newAction.Position + insertLength;
+            return new DocumentAction(revision, newPosition, null, deleteLength, client);
         }
 
         var positionDelta = oldAction.Position - newAction.Position;
-        if (positionDelta >= deleteLength) return new DocumentAction
-        {
-            Client = newAction.Client,
-            Delete = deleteLength,
-            Position = newAction.Position,
-            Revision = oldAction.Revision + 1,
-        };
+        if (positionDelta >= deleteLength)
+            return new DocumentAction(revision, newAction.Position, null, deleteLength, client);
         
         var newDelete = deleteLength + insertLength;
-        return new DocumentAction
-        {
-            Client = newAction.Client,
-            Insert = oldAction.Insert,
-            Delete = newDelete,
-            Position = newAction.Position, 
-            Revision = oldAction.Revision + 1,
-        };
+        return new DocumentAction(revision, newAction.Position, oldAction.Insert, newDelete, client);
     }
     
     public static DocumentAction UpdateOverInsert(DocumentAction newAction, DocumentAction oldAction)
     {
+        var revision = oldAction.Revision + 1;
+        var client = newAction.Client;
         var deleteLength = newAction.Delete ?? 0;
         var newInsertLength = newAction.Insert?.Length ?? 0;
         var oldInsertLength = oldAction.Insert?.Length ?? 0;
@@ -97,63 +74,35 @@ public static class OperationalTransformation
         if (newAction.Position >= oldAction.Position)
         {
             var newPosition = newAction.Position + oldInsertLength;
-            return new DocumentAction
-            {
-                Client = newAction.Client,
-                Delete = deleteLength,
-                Insert = newAction.Insert,
-                Position = newPosition,
-                Revision = oldAction.Revision + 1,
-            };
+            return new DocumentAction(revision, newPosition, newAction.Insert, deleteLength, client);
         }
         
         var positionDelta = oldAction.Position - newAction.Position;
-        if (positionDelta >= deleteLength) return new DocumentAction
-        {
-            Client = newAction.Client,
-            Delete = deleteLength,
-            Insert = newAction.Insert,
-            Position = newAction.Position,
-            Revision = oldAction.Revision + 1,
-        };
+        if (positionDelta >= deleteLength)
+            return new DocumentAction(revision, newAction.Position, newAction.Insert, deleteLength, client);
 
         var newDelete = deleteLength + newInsertLength;
-        var newInsert = (newAction.Insert ?? "") + (oldAction.Insert ?? ""); 
-        return new DocumentAction
-        {
-            Client = newAction.Client,
-            Delete = newDelete,
-            Insert = newInsert,
-            Position = newAction.Position,
-            Revision = oldAction.Revision + 1,
-        };
+        var newInsert = (newAction.Insert ?? "") + (oldAction.Insert ?? "");
+        return new DocumentAction(revision, newAction.Position, newInsert, newDelete, client);
     }
     
     public static DocumentAction InsertOverDelete(DocumentAction newAction, DocumentAction oldAction)
     {
+        var revision = oldAction.Revision + 1;
+        var client = newAction.Client;
         var deleteLength = oldAction.Delete ?? 0;
-        if (newAction.Position < oldAction.Position) return new DocumentAction
-        {
-            Client = newAction.Client,
-            Insert = newAction.Insert,
-            Position = newAction.Position,
-            Revision = oldAction.Revision + 1,
-        };
+        if (newAction.Position < oldAction.Position) return new DocumentAction(revision, newAction.Position, newAction.Insert, null, client);
 
         var positionDelta = newAction.Position - oldAction.Position;
         var delta = positionDelta > deleteLength ? deleteLength : positionDelta;
         var newPosition = newAction.Position - delta;
-        return new DocumentAction
-        {
-            Client = newAction.Client,
-            Insert = newAction.Insert,
-            Position = newPosition,
-            Revision = oldAction.Revision + 1,
-        };
+        return new DocumentAction(revision, newPosition, newAction.Insert, null, client);
     }
     
     public static DocumentAction DeleteOverDelete(DocumentAction newAction, DocumentAction oldAction)
     {
+        var revision = oldAction.Revision + 1;
+        var client = newAction.Client;
         var newDelete = newAction.Delete ?? 0;
         var oldDelete = oldAction.Delete ?? 0;
 
@@ -162,58 +111,27 @@ public static class OperationalTransformation
             var positionDelta = oldAction.Position - newAction.Position;
             if (positionDelta > newDelete)
             {
-                return new DocumentAction
-                {
-                    Client = newAction.Client,
-                    Delete = newAction.Delete,
-                    Position = newAction.Position,
-                    Revision = oldAction.Revision + 1,
-                };
+                return new DocumentAction(revision, newAction.Position, null, newDelete, client);
             }
 
             var deleteRemaining = newDelete - positionDelta - oldDelete;
             var deleteRemainingOrZero = deleteRemaining < 0 ? 0 : deleteRemaining;
-            return new DocumentAction
-            {
-                Client = newAction.Client,
-                Delete = positionDelta + deleteRemainingOrZero,
-                Position = newAction.Position,
-                Revision = oldAction.Revision + 1,
-            };
+            return new DocumentAction(revision, newAction.Position, null, positionDelta + deleteRemainingOrZero, client);
         }
         
         var positionDif = newAction.Position - oldAction.Position;
-        if (positionDif > oldDelete) return new DocumentAction
-        {
-            Client = newAction.Client,
-            Delete = newDelete,
-            Position = newAction.Position - oldDelete,
-            Revision = oldAction.Revision + 1,
-        };
+        if (positionDif > oldDelete) return new DocumentAction(revision, newAction.Position - oldDelete, null, newDelete, client);
         
         var deleteSurplus = newDelete - oldDelete + positionDif;
-        if (deleteSurplus <= 0)
-        {
-            return new DocumentAction
-            {
-                Client = newAction.Client,
-                Delete = 0, 
-                Position = newAction.Position,
-                Revision = oldAction.Revision + 1,
-            };
-        }
-        
-        return new DocumentAction
-        {
-            Client = newAction.Client,
-            Delete = deleteSurplus,
-            Position = oldAction.Position,
-            Revision = oldAction.Revision + 1,
-        };
+        return deleteSurplus <= 0 ? 
+            new DocumentAction(revision, newAction.Position, null, 0, client)
+            : new DocumentAction(revision, oldAction.Position, null, deleteSurplus, client);
     }
 
     public static DocumentAction UpdateOverDelete(DocumentAction newAction, DocumentAction oldAction)
     {
+        var revision = oldAction.Revision + 1;
+        var client = newAction.Client;
         var newDelete = newAction.Delete ?? 0;
         var oldDelete = oldAction.Delete ?? 0;
         
@@ -221,103 +139,45 @@ public static class OperationalTransformation
         {
             var positionDelta = oldAction.Position - newAction.Position;
             if (positionDelta > newDelete)
-            {
-                return new DocumentAction
-                {
-                    Client = newAction.Client,
-                    Delete = newAction.Delete,
-                    Insert = newAction.Insert,
-                    Position = newAction.Position,
-                    Revision = oldAction.Revision + 1,
-                };
-            }
+                return new DocumentAction(revision, newAction.Position, newAction.Insert, newAction.Delete, client);
 
             var deleteRemaining = newDelete - positionDelta - oldDelete;
             var deleteRemainingOrZero = deleteRemaining < 0 ? 0 : deleteRemaining;
             
-            return new DocumentAction
-            {
-                Client = newAction.Client,
-                Delete = positionDelta + deleteRemainingOrZero,
-                Insert = newAction.Insert,
-                Position = newAction.Position,
-                Revision = oldAction.Revision + 1,
-            };
+            return new DocumentAction(revision, newAction.Position, newAction.Insert, positionDelta + deleteRemainingOrZero, client);
         }
         
         var positionDif = newAction.Position - oldAction.Position;
-        if (positionDif > oldDelete) return new DocumentAction
-        {
-            Client = newAction.Client,
-            Delete = newDelete,
-            Insert = newAction.Insert,
-            Position = newAction.Position - oldDelete,
-            Revision = oldAction.Revision + 1,
-        };
+        if (positionDif > oldDelete) 
+            return new DocumentAction(revision, newAction.Position - oldDelete, newAction.Insert, newDelete, client);
         
         var deleteSurplus = newDelete - oldDelete + positionDif;
-        if (deleteSurplus <= 0)
-        {
-            return new DocumentAction
-            {
-                Client = newAction.Client,
-                Delete = 0, 
-                Insert = newAction.Insert,
-                Position = newAction.Position - positionDif,
-                Revision = oldAction.Revision + 1,
-            };
-        }
-        
-        return new DocumentAction
-        {
-            Client = newAction.Client,
-            Delete = deleteSurplus,
-            Insert = newAction.Insert,
-            Position = newAction.Position - positionDif,
-            Revision = oldAction.Revision + 1,
-        };
+        return deleteSurplus <= 0
+            ? new DocumentAction(revision, newAction.Position - positionDif, newAction.Insert, 0, client)
+            : new DocumentAction(revision, newAction.Position - positionDif, newAction.Insert, deleteSurplus, client);
     }
 
     public static DocumentAction InsertOverUpdate(DocumentAction newAction, DocumentAction oldAction)
     {   
+        var revision = oldAction.Revision + 1;
+        var client = newAction.Client;
         var oldDelete = oldAction.Delete ?? 0;
         var oldInsertLength = oldAction.Insert?.Length ?? 0;
         var oldNetLength = oldInsertLength - oldDelete;
         
         if (newAction.Position < oldAction.Position)
-        {
-            return new DocumentAction
-            {
-                Client = newAction.Client,
-                Insert = newAction.Insert,
-                Position = newAction.Position,
-                Revision = oldAction.Revision + 1,
-            };
-        }
+            return new DocumentAction(revision, newAction.Position, newAction.Insert, null, client);
 
         var positionDelta = newAction.Position - oldAction.Position;
-        if (positionDelta > oldDelete)
-        {
-            return new DocumentAction
-            {
-                Client = newAction.Client,
-                Insert = newAction.Insert,
-                Position = newAction.Position + oldNetLength,
-                Revision = oldAction.Revision + 1,
-            };
-        }
-        
-        return new DocumentAction
-        {
-            Client = newAction.Client,
-            Insert = newAction.Insert,
-            Position = newAction.Position + oldInsertLength - positionDelta,
-            Revision = oldAction.Revision + 1,
-        };
+        return positionDelta > oldDelete
+            ? new DocumentAction(revision, newAction.Position + oldNetLength, newAction.Insert, null, client)
+            : new DocumentAction(revision, newAction.Position + oldInsertLength - positionDelta, newAction.Insert, null, client);
     }
 
     public static DocumentAction DeleteOverUpdate(DocumentAction newAction, DocumentAction oldAction)
     {
+        var revision = oldAction.Revision + 1;
+        var client = newAction.Client;
         var newDelete = newAction.Delete ?? 0;
         var oldDelete = oldAction.Delete ?? 0;
         var oldInsertLength = oldAction.Insert?.Length ?? 0;
@@ -327,62 +187,27 @@ public static class OperationalTransformation
         {
             var positionDelta = oldAction.Position - newAction.Position;
             if (positionDelta > newDelete)
-            {
-                return new DocumentAction
-                {
-                    Client = newAction.Client,
-                    Delete = newAction.Delete,
-                    Position = newAction.Position,
-                    Revision = oldAction.Revision + 1,
-                };
-            }
+                return new DocumentAction(revision, newAction.Position, null, newAction.Delete, client);
 
             var deleteRemaining = newDelete - positionDelta - oldDelete;
             var deleteRemainingOrZero = deleteRemaining < 0 ? 0 : deleteRemaining;
-            
-            return new DocumentAction
-            {
-                Client = newAction.Client,
-                Delete = positionDelta + deleteRemainingOrZero + oldInsertLength,
-                Insert = oldAction.Insert,
-                Position = newAction.Position,
-                Revision = oldAction.Revision + 1,
-            };
+            return new DocumentAction(revision, newAction.Position, oldAction.Insert, positionDelta + deleteRemainingOrZero + oldInsertLength, client);
         }
         
         var positionDif = newAction.Position - oldAction.Position;
-        if (positionDif > oldDelete) return new DocumentAction
-        {
-            Client = newAction.Client,
-            Delete = newDelete,
-            Position = newAction.Position + oldNetLength,
-            Revision = oldAction.Revision + 1,
-        };
+        if (positionDif > oldDelete) 
+            return new DocumentAction(revision, newAction.Position + oldNetLength, null, newDelete, client);
         
         var deleteSurplus = newDelete - oldDelete + positionDif;
-        if (deleteSurplus <= 0)
-        {
-            return new DocumentAction
-            {
-                Client = newAction.Client,
-                Delete = 0, 
-                Position = newAction.Position,
-                Revision = oldAction.Revision + 1,
-            };
-        }
-        
-        return new DocumentAction
-        {
-            Client = newAction.Client,
-            Delete = oldInsertLength - positionDif + deleteSurplus,
-            Insert = oldAction.Insert?[positionDif..] ?? "",
-            Position = newAction.Position, 
-            Revision = oldAction.Revision + 1,
-        };
+        return deleteSurplus <= 0
+            ? new DocumentAction(revision, newAction.Position, null, 0, client)
+            : new DocumentAction(revision, newAction.Position, oldAction.Insert?[positionDif..] ?? "", oldInsertLength - positionDif + deleteSurplus, client);
     }
 
     public static DocumentAction UpdateOverUpdate(DocumentAction newAction, DocumentAction oldAction)
     {
+        var revision = oldAction.Revision + 1;
+        var client = newAction.Client;
         var newDelete = newAction.Delete ?? 0;
         var oldDelete = oldAction.Delete ?? 0;
         var oldInsertLength = oldAction.Insert?.Length ?? 0;
@@ -392,49 +217,19 @@ public static class OperationalTransformation
         {
             var positionDelta = oldAction.Position - newAction.Position;
             if (positionDelta > newDelete)
-            {
-                return new DocumentAction
-                {
-                    Client = newAction.Client,
-                    Delete = newAction.Delete,
-                    Insert = newAction.Insert,
-                    Position = newAction.Position,
-                    Revision = oldAction.Revision + 1,
-                };
-            }
+                return new DocumentAction(revision, newAction.Position, newAction.Insert, newAction.Delete, client);
 
             var deleteRemaining = newDelete - positionDelta - oldDelete;
             var deleteRemainingOrZero = deleteRemaining < 0 ? 0 : deleteRemaining;
-            
-            return new DocumentAction
-            {
-                Client = newAction.Client,
-                Delete = positionDelta + oldInsertLength + deleteRemainingOrZero,
-                Insert = newAction.Insert + (oldAction.Insert ?? ""),
-                Position = newAction.Position,
-                Revision = oldAction.Revision + 1,
-            };
+            return new DocumentAction(revision, newAction.Position, newAction.Insert + (oldAction.Insert ?? ""), positionDelta + oldInsertLength + deleteRemainingOrZero, client);
         }
         
         var positionDif = newAction.Position - oldAction.Position;
-        if (positionDif > oldDelete) return new DocumentAction
-        {
-            Client = newAction.Client,
-            Delete = newDelete,
-            Insert = newAction.Insert,
-            Position = newAction.Position + oldNetLength,
-            Revision = oldAction.Revision + 1,
-        };
+        if (positionDif > oldDelete) 
+            return new DocumentAction(revision, newAction.Position + oldNetLength, newAction.Insert, newDelete, client);
         
         var deleteSurplus = newDelete - oldDelete + positionDif;
         var deleteSurplusOrZero = deleteSurplus < 0 ? 0 : deleteSurplus;
-        return new DocumentAction
-        {
-            Client = newAction.Client,
-            Delete = deleteSurplusOrZero,
-            Insert = newAction.Insert,
-            Position = oldAction.Position + oldInsertLength,
-            Revision = oldAction.Revision + 1,
-        };
+        return new DocumentAction(revision, oldAction.Position + oldInsertLength, newAction.Insert, deleteSurplusOrZero, client);
     }
 }

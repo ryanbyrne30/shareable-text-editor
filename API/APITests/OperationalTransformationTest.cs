@@ -10,17 +10,12 @@ public class Tests
     {
     }
 
-    private DocumentAction CreateAction(int pos, string? insert, int? delete)
+    private static DocumentAction CreateAction(int pos, string? insert, int? delete)
     {
-        return new DocumentAction
-        {
-            Position = pos,
-            Insert = insert,
-            Delete = delete
-        };
+        return new DocumentAction(0, pos, insert, delete);
     }
 
-    private void AssertExpectedString(string baseString, string expectedString, DocumentAction oldAction, DocumentAction transformedAction)
+    private static void AssertExpectedString(string baseString, string expectedString, DocumentAction oldAction, DocumentAction transformedAction)
     {
         var oldString = oldAction.Apply(baseString);
         var newString = transformedAction.Apply(oldString);
@@ -544,12 +539,7 @@ public class Tests
             CreateAction(1, "aaa", 1), // 0aaa256
             CreateAction(3, "z", null), // 0aaza256
         ];
-        var newAction = new DocumentAction
-        {
-            Position = 2,
-            Insert = "bbb",
-            Delete = 1
-        };
+        var newAction = new DocumentAction(0, 2, "bbb", 1);
         const string expected = "0aazabbb56";
         var currentDoc = completedActions.Aggregate(baseString, (s, action) => action.Apply(s));
         
@@ -567,12 +557,7 @@ public class Tests
             CreateAction(1, "aaa", 2), // 0aaa3456 
             CreateAction(3, "z", null), // 0aaza3456
         ];
-        var newAction = new DocumentAction
-        {
-            Position = 1,
-            Insert = "bbb",
-            Delete = 1
-        };
+        var newAction = new DocumentAction(0, 1, "bbb", 1);
         const string expected = "0aazabbb3456";
         var currentDoc = completedActions.Aggregate(baseString, (s, action) => action.Apply(s));
         
