@@ -15,7 +15,6 @@ export class DocumentState {
 
 	#getNextRevisionNumber = (): number => {
 		const add = this.sentChanges === null ? 0 : 1;
-		console.table({ lastSync: this.lastSyncedVersion, pending: this.pendingChanges.length, add });
 		return this.lastSyncedVersion + this.pendingChanges.length + add + 1;
 	};
 
@@ -124,6 +123,7 @@ export class DocumentState {
 			return;
 		}
 		console.debug('Received message:', message);
+		console.log('Previous revision:', this.lastSyncedVersion, 'New revision:', message.revision);
 		this.lastSyncedVersion = message.revision ?? this.lastSyncedVersion;
 
 		const action: TextAction = {
@@ -137,11 +137,19 @@ export class DocumentState {
 			this.sentChanges,
 			this.pendingChanges
 		);
+		console.log('State:', {
+			version: this.lastSyncedVersion,
+			received: message,
+			apply: applyAction,
+			sentOriginal: this.sentChanges,
+			sent: sendAction,
+			pendingOriginal: this.pendingChanges,
+			pending: pendingActions
+		});
 		this.#applyRemoteAction(applyAction);
 
 		this.sentChanges = sendAction;
 		this.pendingChanges = pendingActions;
-		console.log('Pending actions after:', pendingActions);
 
 		for (let cb of this.onTextChange) {
 			cb(this.document);

@@ -212,5 +212,17 @@ describe('OperationTransform', () => {
 			// act & assert
 			runTest(doc, remoteAction, localAction, expected, expectedString);
 		});
+
+		it('remoteAction update comes at big localAction update -> remoteAction comes before localAction', () => {
+			// arrange
+			const doc = '0123456';
+			const localAction = newTextAction(0, 3, 'b', undefined);
+			const remoteAction = newTextAction(0, 1, 'a', 3);
+			const expected = newTextAction(0, 1, 'ab', 4);
+			const expectedString = '0ab456';
+
+			// act & assert
+			runTest(doc, remoteAction, localAction, expected, expectedString);
+		});
 	});
 });

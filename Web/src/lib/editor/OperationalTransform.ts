@@ -14,6 +14,7 @@ export class OperationalTransform {
 			sendAction === null ? null : this.transformAction(sendAction, receivedAction);
 
 		let applyAction = { ...receivedAction };
+		if (sendAction !== null) applyAction = this.reverseUpdateOverUpdate(sendAction, receivedAction);
 		const transformedPendingActions: TextAction[] = [];
 		for (let a of pendingActions) {
 			transformedPendingActions.push(this.transformAction(a, receivedAction));
