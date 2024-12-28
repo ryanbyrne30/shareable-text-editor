@@ -14,15 +14,17 @@ export class DocumentState {
 	constructor(private socket: SyncSocket) {}
 
 	#getNextRevisionNumber = (): number => {
-		return this.lastSyncedVersion + this.pendingChanges.length + 1;
+		const add = this.sentChanges === null ? 0 : 1;
+		console.table({ lastSync: this.lastSyncedVersion, pending: this.pendingChanges.length, add });
+		return this.lastSyncedVersion + this.pendingChanges.length + add + 1;
 	};
 
 	#sendNextChange = (): void => {
 		if (this.sentChanges !== null) return;
 		const pending = this.pendingChanges.pop();
 		if (pending === undefined) return;
-		this.sentChanges = pending;
-		this.socket.sendChange(pending);
+		this.sentChanges = { ...pending };
+		this.socket.sendChange(this.sentChanges);
 	};
 
 	#addPendingChange = (action: TextAction): void => {
@@ -34,6 +36,7 @@ export class DocumentState {
 	};
 
 	#acknowledgeSentChange = (version: number) => {
+		console.debug('Sent change acknowledged. Synced version:', version);
 		this.lastSyncedVersion = version;
 		this.sentChanges = null;
 		this.#sendNextChange();
@@ -121,8 +124,7 @@ export class DocumentState {
 			return;
 		}
 		console.debug('Received message:', message);
-
-		// TODO: apply OT here if version mismatch
+		this.lastSyncedVersion = message.revision ?? this.lastSyncedVersion;
 
 		const action: TextAction = {
 			pos: message.pos ?? 0,
@@ -130,12 +132,16 @@ export class DocumentState {
 			delete: message.delete ?? undefined,
 			insert: message.insert ?? undefined
 		};
-		const { sendAction, pendingActions } = OperationalTransform.transform(
+		const { sendAction, pendingActions, applyAction } = OperationalTransform.transform(
 			action,
 			this.sentChanges,
 			this.pendingChanges
 		);
-		this.#applyRemoteAction(message);
+		this.#applyRemoteAction(applyAction);
+
+		this.sentChanges = sendAction;
+		this.pendingChanges = pendingActions;
+		console.log('Pending actions after:', pendingActions);
 
 		for (let cb of this.onTextChange) {
 			cb(this.document);
@@ -173,12 +179,6 @@ export class DocumentState {
 		if (!hasRevision) {
 			console.error('Action does not have revision:', action);
 			throw new Error('Action does not have revision');
-		}
-
-		this.lastSyncedVersion = revision;
-
-		if (this.sentChanges !== null) {
-			throw new Error('Not implemented. Need conflict resolution here');
 		}
 
 		if (hasInsert && hasDelete) this.#replace(pos, del, insert);

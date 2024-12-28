@@ -10,10 +10,17 @@ public static class DocumentStateManager
 
         while(true) 
         {
-            var pending = DocumentService.GetNextPendingDocumentAction(docId);
-            if (pending == null) continue;
-            var transformed = ApplyAction(docId, pending);
-            await DocumentClientService.BroadcastAction(docId, transformed);
+            try
+            {
+                var pending = DocumentService.GetNextPendingDocumentAction(docId);
+                if (pending == null) continue;
+                var transformed = ApplyAction(docId, pending);
+                var text = DocumentService.GetDocumentContent(docId);
+                await DocumentClientService.BroadcastAction(docId, transformed);
+            } catch (Exception e)
+            {
+                Console.WriteLine($"Error processing document {docId}: {e.Message}");
+            }
         }
     }
     
@@ -21,7 +28,7 @@ public static class DocumentStateManager
     {
         var completedActions = DocumentService.GetCompletedDocumentActions(docId);
         var newAction = OperationalTransformation.Transform(action, completedActions);
-        DocumentService.ApplyAction(docId, newAction);
+        DocumentService.ApplyAction(docId, newAction, action);
         return newAction;
     }
 }

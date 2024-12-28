@@ -71,17 +71,22 @@ public static class DocumentService
         return Documents.TryGetValue(documentId, out var document) ? document.CompletedActions : [];
     }
     
-    public static void ApplyAction(string docId, DocumentAction action)
+    public static void ApplyAction(string docId, DocumentAction action, DocumentAction originalAction)
     {
         var document = GetOrCreateDocument(docId);
         var content = document.Content;
         document.Content = action.Apply(content);
         document.CompletedActions.Add(action);
-        document.PendingActions.Remove(action);
+        document.PendingActions.Remove(originalAction);
     }
 
     public static List<DocumentClient> GetDocumentClients(string docId)
     {
         return Documents.TryGetValue(docId, out var document) ? document.Clients : [];
+    }
+    
+    public static String GetDocumentContent(string docId)
+    {
+        return Documents.TryGetValue(docId, out var document) ? document.Content : "";
     }
 }

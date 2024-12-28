@@ -1,10 +1,4 @@
-import {
-	newTextAction,
-	textActionIsDelete,
-	textActionIsInsert,
-	textActionIsUpdate,
-	type TextAction
-} from './TextAction';
+import { newTextAction, type TextAction } from './TextAction';
 
 export class OperationalTransform {
 	static getRevision = (newAction: TextAction, oldAction: TextAction): number => {
@@ -15,17 +9,20 @@ export class OperationalTransform {
 		receivedAction: TextAction,
 		sendAction: TextAction | null,
 		pendingActions: TextAction[]
-	): { sendAction: TextAction | null; pendingActions: TextAction[] } => {
+	): { sendAction: TextAction | null; pendingActions: TextAction[]; applyAction: TextAction } => {
 		const newSendAction =
 			sendAction === null ? null : this.transformAction(sendAction, receivedAction);
 
+		let applyAction = { ...receivedAction };
 		const transformedPendingActions: TextAction[] = [];
 		for (let a of pendingActions) {
 			transformedPendingActions.push(this.transformAction(a, receivedAction));
+			applyAction = this.reverseUpdateOverUpdate(a, applyAction);
 		}
 		return {
 			sendAction: newSendAction,
-			pendingActions: transformedPendingActions
+			pendingActions: transformedPendingActions,
+			applyAction
 		};
 	};
 
@@ -75,6 +72,40 @@ export class OperationalTransform {
 			revision,
 			oldAction.pos + oldInsertLength,
 			newAction.insert,
+			deleteSurplus
+		);
+	};
+
+	static reverseUpdateOverUpdate = (newAction: TextAction, oldAction: TextAction): TextAction => {
+		const revision = 0; // don't care about revision as oldAction will only be applied to UI
+		const newDelete = newAction.delete ?? 0;
+		const newInsertLength = newAction.insert?.length ?? 0;
+		const newNetLength = newInsertLength - newDelete;
+		const oldDelete = oldAction.delete ?? 0;
+
+		if (oldAction.pos < newAction.pos) {
+			const positionDelta = newAction.pos - oldAction.pos;
+			if (positionDelta > oldDelete)
+				return newTextAction(revision, oldAction.pos, oldAction.insert, oldAction.delete);
+
+			const deleteRemaining = Math.max(0, oldDelete - positionDelta - newDelete);
+			return newTextAction(
+				revision,
+				oldAction.pos,
+				oldAction.insert + (newAction.insert ?? ''),
+				positionDelta + newInsertLength + deleteRemaining
+			);
+		}
+
+		const positionDif = oldAction.pos - newAction.pos;
+		if (positionDif > newDelete)
+			return newTextAction(revision, oldAction.pos + newNetLength, oldAction.insert, oldDelete);
+
+		const deleteSurplus = Math.max(0, oldDelete - newDelete + positionDif);
+		return newTextAction(
+			revision,
+			newAction.pos + newInsertLength,
+			oldAction.insert,
 			deleteSurplus
 		);
 	};

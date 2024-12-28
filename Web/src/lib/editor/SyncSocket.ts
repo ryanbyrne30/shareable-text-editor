@@ -28,6 +28,7 @@ export class SyncSocket {
 	}
 
 	sendChange = async (action: TextAction) => {
+		console.debug('Sending change to server...', action);
 		this.socket.send(JSON.stringify(action));
 	};
 

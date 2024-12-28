@@ -10,7 +10,8 @@ public static class OperationalTransformation
         if (action.Revision == docVersion + 1) return action;
         if (action.Revision > docVersion + 1) throw new Exception("Invalid revision number");
 
-        var transformedAction = completedActions[action.Revision..].Aggregate(action, TransformAction);
+        var conflictingActions = completedActions.Slice(action.Revision - 1, completedActions.Count - action.Revision + 1);
+        var transformedAction = conflictingActions.Aggregate(action, TransformAction);
         if (transformedAction == null) throw new Exception("Invalid transformation");
         return transformedAction;
     }

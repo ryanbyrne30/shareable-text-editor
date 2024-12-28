@@ -18,9 +18,12 @@ public class DocumentAction(int revision, int position, string? insert, int? del
     
     public string Apply(string document)
     {
-        if (Insert != null && Delete == null) return document.Insert(Position, Insert);
-        if (Delete != null && Insert == null) return document.Remove(Position, Delete.Value);
-        if (Insert != null && Delete != null) return document.Remove(Position, Delete.Value).Insert(Position, Insert);
+        var isDelete = (Delete ?? 0) > 0;
+        var isInsert = !String.IsNullOrEmpty(Insert);
+        
+        if (isInsert && !isDelete) return document.Insert(Position, Insert ?? "");
+        if (isDelete && !isInsert) return document.Remove(Position, Delete ?? 0);
+        if (isInsert && isDelete) return document.Remove(Position, Delete ?? 0).Insert(Position, Insert ?? "");
         return document;
     }
 }
