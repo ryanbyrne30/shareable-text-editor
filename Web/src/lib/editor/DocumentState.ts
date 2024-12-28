@@ -1,3 +1,4 @@
+import { OperationalTransform } from './OperationalTransform';
 import type { ReceivedMessage, SyncSocket } from './SyncSocket';
 import { NON_TEXT_KEYS, type TextAction } from './TextAction';
 
@@ -122,6 +123,18 @@ export class DocumentState {
 		console.debug('Received message:', message);
 
 		// TODO: apply OT here if version mismatch
+
+		const action: TextAction = {
+			pos: message.pos ?? 0,
+			revision: message.revision ?? 0,
+			delete: message.delete ?? undefined,
+			insert: message.insert ?? undefined
+		};
+		const { sendAction, pendingActions } = OperationalTransform.transform(
+			action,
+			this.sentChanges,
+			this.pendingChanges
+		);
 		this.#applyRemoteAction(message);
 
 		for (let cb of this.onTextChange) {

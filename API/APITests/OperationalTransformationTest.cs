@@ -25,7 +25,7 @@ public class Tests
         var newAction = CreateAction(2, "bbb", null);
         const string baseString = "0123456";
         const string expectedString = "01bbb2aaa3456";
-        var receivedAction = OperationalTransformation.InsertOverInsert(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -36,7 +36,7 @@ public class Tests
         var newAction = CreateAction(1, "bbb", null);
         const string baseString = "0123456";
         const string expectedString = "0aaabbb123456";
-        var receivedAction = OperationalTransformation.InsertOverInsert(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -47,7 +47,7 @@ public class Tests
         var newAction = CreateAction(3, "bbb", null);
         const string baseString = "0123456";
         const string expectedString = "0aaa12bbb3456";
-        var receivedAction = OperationalTransformation.InsertOverInsert(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -58,7 +58,7 @@ public class Tests
         var newAction = CreateAction(2, null, 2);
         const string baseString = "0123456";
         const string expectedString = "0145aaa6";
-        var receivedAction = OperationalTransformation.DeleteOverInsert(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -69,7 +69,7 @@ public class Tests
         var newAction = CreateAction(2, null, 2);
         const string baseString = "0123456";
         const string expectedString = "01aaa456";
-        var receivedAction = OperationalTransformation.DeleteOverInsert(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -80,7 +80,7 @@ public class Tests
         var newAction = CreateAction(3, null, 2);
         const string baseString = "0123456";
         const string expectedString = "012aaa56";
-        var receivedAction = OperationalTransformation.DeleteOverInsert(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -91,7 +91,7 @@ public class Tests
         var newAction = CreateAction(3, null, 2);
         const string baseString = "0123456";
         const string expectedString = "0aaa1256";
-        var receivedAction = OperationalTransformation.DeleteOverInsert(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -102,7 +102,7 @@ public class Tests
         var newAction = CreateAction(1, "bbb", 2);
         const string baseString = "0123456";
         const string expectedString = "0bbb345aaa6";
-        var receivedAction = OperationalTransformation.UpdateOverInsert(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -113,7 +113,7 @@ public class Tests
         var newAction = CreateAction(2, "bbb", 2);
         const string baseString = "0123456";
         const string expectedString = "0aaa1bbb456";
-        var receivedAction = OperationalTransformation.UpdateOverInsert(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -124,7 +124,7 @@ public class Tests
         var newAction = CreateAction(1, "bbb", 2);
         const string baseString = "0123456";
         const string expectedString = "0aaabbb3456";
-        var receivedAction = OperationalTransformation.UpdateOverInsert(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -135,7 +135,7 @@ public class Tests
         var newAction = CreateAction(2, "bbb", 2);
         const string baseString = "0123456";
         const string expectedString = "01bbbaaa456";
-        var receivedAction = OperationalTransformation.UpdateOverInsert(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -146,7 +146,7 @@ public class Tests
         var newAction = CreateAction(1, "bbb", null);
         const string baseString = "0123456";
         const string expectedString = "0bbb1234";
-        var receivedAction = OperationalTransformation.InsertOverDelete(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -157,7 +157,7 @@ public class Tests
         var newAction = CreateAction(1, "bbb", null);
         const string baseString = "0123456";
         const string expectedString = "0bbb3456";
-        var receivedAction = OperationalTransformation.InsertOverDelete(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -168,7 +168,7 @@ public class Tests
         var newAction = CreateAction(2, "bbb", null);
         const string baseString = "0123456";
         const string expectedString = "0bbb3456";
-        var receivedAction = OperationalTransformation.InsertOverDelete(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -179,7 +179,7 @@ public class Tests
         var newAction = CreateAction(5, "bbb", null);
         const string baseString = "0123456";
         const string expectedString = "034bbb56";
-        var receivedAction = OperationalTransformation.InsertOverDelete(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -190,7 +190,7 @@ public class Tests
         var newAction = CreateAction(0, null, 4);
         const string baseString = "0123456";
         const string expectedString = "46";
-        var receivedAction = OperationalTransformation.DeleteOverDelete(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -201,7 +201,7 @@ public class Tests
         var newAction = CreateAction(1, null, 4);
         const string baseString = "0123456";
         const string expectedString = "056";
-        var receivedAction = OperationalTransformation.DeleteOverDelete(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -212,7 +212,7 @@ public class Tests
         var newAction = CreateAction(1, null, 2);
         const string baseString = "0123456";
         const string expectedString = "06";
-        var receivedAction = OperationalTransformation.DeleteOverDelete(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -223,7 +223,7 @@ public class Tests
         var newAction = CreateAction(2, null, 2);
         const string baseString = "0123456";
         const string expectedString = "016";
-        var receivedAction = OperationalTransformation.DeleteOverDelete(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -234,7 +234,7 @@ public class Tests
         var newAction = CreateAction(5, null, 1);
         const string baseString = "0123456";
         const string expectedString = "0346";
-        var receivedAction = OperationalTransformation.DeleteOverDelete(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -245,7 +245,7 @@ public class Tests
         var newAction = CreateAction(2, null, 3);
         const string baseString = "0123456";
         const string expectedString = "056";
-        var receivedAction = OperationalTransformation.DeleteOverDelete(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -256,7 +256,7 @@ public class Tests
         var newAction = CreateAction(1, "bbb", 1);
         const string baseString = "0123456";
         const string expectedString = "0bbb234";
-        var receivedAction = OperationalTransformation.UpdateOverDelete(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -267,7 +267,7 @@ public class Tests
         var newAction = CreateAction(5, "bbb", 1);
         const string baseString = "0123456";
         const string expectedString = "034bbb6";
-        var receivedAction = OperationalTransformation.UpdateOverDelete(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -278,7 +278,7 @@ public class Tests
         var newAction = CreateAction(2, "bbb", 3);
         const string baseString = "0123456";
         const string expectedString = "01bbb56";
-        var receivedAction = OperationalTransformation.UpdateOverDelete(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -289,7 +289,7 @@ public class Tests
         var newAction = CreateAction(2, "bbb", 2);
         const string baseString = "0123456";
         const string expectedString = "01bbb6";
-        var receivedAction = OperationalTransformation.UpdateOverDelete(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -300,7 +300,7 @@ public class Tests
         var newAction = CreateAction(3, "bbb", 1);
         const string baseString = "0123456";
         const string expectedString = "01bbb56";
-        var receivedAction = OperationalTransformation.UpdateOverDelete(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -311,7 +311,7 @@ public class Tests
         var newAction = CreateAction(3, "bbb", 3);
         const string baseString = "0123456";
         const string expectedString = "01bbb6";
-        var receivedAction = OperationalTransformation.UpdateOverDelete(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -322,7 +322,7 @@ public class Tests
         var newAction = CreateAction(2, "bbb", 3);
         const string baseString = "0123456";
         const string expectedString = "01bbb56";
-        var receivedAction = OperationalTransformation.UpdateOverDelete(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -333,7 +333,7 @@ public class Tests
         var newAction = CreateAction(1, "bbb", null);
         const string baseString = "0123456";
         const string expectedString = "0bbb1aaa3456";
-        var receivedAction = OperationalTransformation.InsertOverUpdate(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -344,7 +344,7 @@ public class Tests
         var newAction = CreateAction(2, "bbb", null);
         const string baseString = "0123456";
         const string expectedString = "01aaabbb3456";
-        var receivedAction = OperationalTransformation.InsertOverUpdate(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -355,7 +355,7 @@ public class Tests
         var newAction = CreateAction(3, "bbb", null);
         const string baseString = "0123456";
         const string expectedString = "01aaabbb56";
-        var receivedAction = OperationalTransformation.InsertOverUpdate(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -366,7 +366,7 @@ public class Tests
         var newAction = CreateAction(5, "bbb", null);
         const string baseString = "0123456";
         const string expectedString = "01aaa34bbb56";
-        var receivedAction = OperationalTransformation.InsertOverUpdate(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -377,7 +377,7 @@ public class Tests
         var newAction = CreateAction(1, null, 2);
         const string baseString = "0123456";
         const string expectedString = "034aaa6";
-        var receivedAction = OperationalTransformation.DeleteOverUpdate(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -388,7 +388,7 @@ public class Tests
         var newAction = CreateAction(1, null, 3);
         const string baseString = "0123456";
         const string expectedString = "0aaa456";
-        var receivedAction = OperationalTransformation.DeleteOverUpdate(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -399,7 +399,7 @@ public class Tests
         var newAction = CreateAction(2, null, 3);
         const string baseString = "0123456";
         const string expectedString = "01aaa56";
-        var receivedAction = OperationalTransformation.DeleteOverUpdate(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -410,7 +410,7 @@ public class Tests
         var newAction = CreateAction(4, null, 2);
         const string baseString = "0123456";
         const string expectedString = "0aaa236";
-        var receivedAction = OperationalTransformation.DeleteOverUpdate(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -421,7 +421,7 @@ public class Tests
         var newAction = CreateAction(2, null, 1);
         const string baseString = "0123456";
         const string expectedString = "0aaa456";
-        var receivedAction = OperationalTransformation.DeleteOverUpdate(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     
@@ -432,7 +432,7 @@ public class Tests
         var newAction = CreateAction(2, null, 3);
         const string baseString = "0123456";
         const string expectedString = "0aaa56";
-        var receivedAction = OperationalTransformation.DeleteOverUpdate(newAction, oldAction);
+        var receivedAction = OperationalTransformation.TransformAction(newAction, oldAction);
         AssertExpectedString(baseString, expectedString, oldAction, receivedAction);
     }
     

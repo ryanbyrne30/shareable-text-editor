@@ -5,6 +5,32 @@ export type TextAction = {
 	delete?: number;
 };
 
+export function newTextAction(
+	revision: number,
+	pos: number,
+	insert?: string,
+	del?: number
+): TextAction {
+	return {
+		revision,
+		pos,
+		insert,
+		delete: del
+	};
+}
+
+export function textActionIsInsert(a: TextAction): boolean {
+	return a.delete === undefined && a.insert !== undefined;
+}
+
+export function textActionIsDelete(a: TextAction): boolean {
+	return a.delete !== undefined && a.insert === undefined;
+}
+
+export function textActionIsUpdate(a: TextAction): boolean {
+	return a.delete !== undefined && a.insert !== undefined;
+}
+
 export const NON_TEXT_KEYS = [
 	'Escape',
 	'F1',
