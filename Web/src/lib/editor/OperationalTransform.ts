@@ -76,37 +76,50 @@ export class OperationalTransform {
 		);
 	};
 
-	static reverseUpdateOverUpdate = (newAction: TextAction, oldAction: TextAction): TextAction => {
-		const revision = 0; // don't care about revision as oldAction will only be applied to UI
-		const newDelete = newAction.delete ?? 0;
-		const newInsertLength = newAction.insert?.length ?? 0;
-		const newNetLength = newInsertLength - newDelete;
-		const oldDelete = oldAction.delete ?? 0;
+	static reverseUpdateOverUpdate = (
+		localAction: TextAction,
+		remoteAction: TextAction
+	): TextAction => {
+		const revision = 0; // don't care about revision as remoteAction will only be applied to UI
+		const localDelete = localAction.delete ?? 0;
+		const localInsert = localAction.insert ?? '';
+		const localInsertLength = localAction.insert?.length ?? 0;
+		const localNetLength = localInsertLength - localDelete;
+		const remoteDelete = remoteAction.delete ?? 0;
+		const remoteInsert = remoteAction.insert ?? '';
 
-		if (oldAction.pos < newAction.pos) {
-			const positionDelta = newAction.pos - oldAction.pos;
-			if (positionDelta > oldDelete)
-				return newTextAction(revision, oldAction.pos, oldAction.insert, oldAction.delete);
+		if (remoteAction.pos <= localAction.pos) {
+			const positionDelta = localAction.pos - remoteAction.pos;
+			if (positionDelta > remoteDelete)
+				return newTextAction(revision, remoteAction.pos, remoteAction.insert, remoteAction.delete);
 
-			const deleteRemaining = Math.max(0, oldDelete - positionDelta - newDelete);
-			return newTextAction(
-				revision,
-				oldAction.pos,
-				oldAction.insert + (newAction.insert ?? ''),
-				positionDelta + newInsertLength + deleteRemaining
-			);
+			const deleteRemainder = Math.max(0, remoteDelete - positionDelta - localDelete);
+			const deleteTotal = positionDelta + localInsertLength + deleteRemainder;
+			const replaceWith = remoteInsert + localInsert;
+			return newTextAction(revision, remoteAction.pos, replaceWith, deleteTotal);
 		}
 
-		const positionDif = oldAction.pos - newAction.pos;
-		if (positionDif > newDelete)
-			return newTextAction(revision, oldAction.pos + newNetLength, oldAction.insert, oldDelete);
+		const positionDif = remoteAction.pos - localAction.pos;
+		if (positionDif > localDelete)
+			return newTextAction(
+				revision,
+				remoteAction.pos + localNetLength,
+				remoteAction.insert,
+				remoteDelete
+			);
 
-		const deleteSurplus = Math.max(0, oldDelete - newDelete + positionDif);
-		return newTextAction(
-			revision,
-			newAction.pos + newInsertLength,
-			oldAction.insert,
-			deleteSurplus
-		);
+		const localEndPos = localAction.pos + localInsertLength;
+		const deleteTotal = Math.max(0, remoteDelete - localDelete + positionDif);
+		return newTextAction(revision, localEndPos, remoteInsert, deleteTotal);
+	};
+
+	static applyAction = (text: string, action: TextAction): string => {
+		const insert = action.insert ?? '';
+		const del = action.delete ?? 0;
+
+		const before = text.slice(0, action.pos);
+		const middle = insert;
+		const after = text.slice(action.pos + del);
+		return before + middle + after;
 	};
 }

@@ -149,57 +149,29 @@ export class DocumentState {
 	};
 
 	#applyLocalAction = (action: TextAction) => {
-		const pos = action.pos;
-		const insert = action.insert;
-		const del = action.delete;
-
-		const hasInsert = typeof insert === 'string';
-		const hasDelete = typeof del === 'number';
-
-		if (hasInsert && hasDelete) this.#replace(pos, del, insert);
-		else if (hasInsert) this.#insert(pos, insert);
-		else if (hasDelete) this.#delete(pos, del);
+		this.document = OperationalTransform.applyAction(this.document, {
+			revision: action.revision ?? 0,
+			pos: action.pos ?? 0,
+			delete: action.delete ?? 0,
+			insert: action.insert ?? ''
+		});
 	};
 
 	#applyRemoteAction = (action: ReceivedMessage) => {
-		const pos = action.pos;
-		const insert = action.insert;
-		const del = action.delete;
-		const revision = action.revision;
-
-		const hasInsert = typeof insert === 'string';
-		const hasDelete = typeof del === 'number';
-		const hasPos = typeof pos === 'number';
-		const hasRevision = typeof revision === 'number';
-
-		if (!hasPos) {
+		if (action.pos === undefined) {
 			console.error('Action does not have position:', action);
 			throw new Error('Action does not have position');
 		}
-		if (!hasRevision) {
+		if (action.revision === undefined) {
 			console.error('Action does not have revision:', action);
 			throw new Error('Action does not have revision');
 		}
 
-		if (hasInsert && hasDelete) this.#replace(pos, del, insert);
-		else if (hasInsert) this.#insert(pos, insert);
-		else if (hasDelete) this.#delete(pos, del);
-	};
-
-	#insert = (pos: number, text: string) => {
-		console.debug(`Inserting '${text}' at pos ${pos}`);
-		const before = this.document.slice(0, pos);
-		const after = this.document.slice(pos);
-		this.document = before + text + after;
-	};
-
-	#delete = (pos: number, length: number) => {
-		console.debug(`Deleting '${length}' at pos ${pos}`);
-		this.document = this.document.slice(0, pos) + this.document.slice(pos + length);
-	};
-
-	#replace = (pos: number, length: number, text: string) => {
-		console.debug(`Replacing '${length}' at pos ${pos} with ${text}`);
-		this.document = this.document.slice(0, pos) + text + this.document.slice(pos + length);
+		this.document = OperationalTransform.applyAction(this.document, {
+			revision: action.revision ?? 0,
+			pos: action.pos ?? 0,
+			delete: action.delete ?? 0,
+			insert: action.insert ?? ''
+		});
 	};
 }
