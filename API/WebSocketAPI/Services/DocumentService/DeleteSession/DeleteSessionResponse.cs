@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
 
-namespace WebSocketAPI.Services.DocumentService.DeleteSocketSessions;
+namespace WebSocketAPI.Services.DocumentService.DeleteSession;
 
-public class DeleteSocketSessionsResponse
+public class DeleteSessionResponse
 {
     [JsonPropertyName("message")]
     public required string Message { get; set; }

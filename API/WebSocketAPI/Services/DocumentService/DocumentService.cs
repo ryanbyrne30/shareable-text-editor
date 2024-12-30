@@ -1,6 +1,6 @@
 using WebSocketAPI.Config;
 using WebSocketAPI.Services.DocumentService.CreateSession;
-using WebSocketAPI.Services.DocumentService.DeleteSocketSessions;
+using WebSocketAPI.Services.DocumentService.DeleteSession;
 
 namespace WebSocketAPI.Services.DocumentService;
 
@@ -16,9 +16,9 @@ public class DocumentService(AppConfig config, HttpRequestService.HttpRequestSer
         return await requestService.Post<CreateSessionRequest, CreateSessionResponse>(CreateUrl("/sessions"), request);
     }
     
-    public async Task DeleteSocketSessions(string socketId)
+    public async Task DeleteSession(string sessionId)
     {
-        logger.LogDebug("Deleting sessions for socket {socketId}", socketId);
-        await requestService.Delete<DeleteSocketSessionsResponse>(CreateUrl($"/sockets/socket/{socketId}"));
+        logger.LogDebug("Deleting sessions for session {sessionId}", sessionId);
+        await requestService.Delete<DeleteSessionResponse>(CreateUrl($"/sessions/session/{sessionId}"));
     }
 }

@@ -14,9 +14,9 @@ public class DocumentAction
     
     public DateTime OccurredAt { get; set; }
     public bool IsCompleted { get; set; }
-    public long Revision { get; set; }
-    public long Position { get; set; }
-    public long Deleted { get; set; }
+    public ulong Revision { get; set; }
+    public ulong Position { get; set; }
+    public ulong Deleted { get; set; }
     
     [MaxLength(10000)]
     public required string Inserted { get; set; }

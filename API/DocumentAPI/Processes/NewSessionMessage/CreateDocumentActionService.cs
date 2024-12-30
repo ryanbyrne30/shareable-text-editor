@@ -1,19 +1,13 @@
 using DocumentAPI.Domain;
 using DocumentAPI.Repositories;
 
-namespace DocumentAPI.Processes.CreateDocumentAction;
+namespace DocumentAPI.Processes.NewSessionMessage;
 
 public class CreateDocumentActionService(Repository repository)
 {
-    public async Task<string> CreateAction(string docId, CreateDocumentActionRequest request)
+    public async Task<string> CreateAction(string sessionId, ulong revision, ulong position, ulong deleted, string inserted)
     {
-        var document = await repository.Documents.FindAsync(docId);
-        if (document == null)
-        {
-            throw new BadHttpRequestException("Document not found");
-        }
-
-        var session = repository.Sessions.FirstOrDefault(s => s.DocumentId == docId && s.SocketId == request.SocketId);
+        var session = await repository.Sessions.FindAsync(sessionId);
         if (session == null)
         {
             throw new BadHttpRequestException("Session not found");
@@ -24,10 +18,10 @@ public class CreateDocumentActionService(Repository repository)
         {
             Id = id, 
             SessionId = session.Id,
-            Revision = request.Revision,
-            Inserted = request.Inserted,
-            Deleted = request.Deleted,
-            Position = request.Position,
+            Revision = revision,
+            Inserted = inserted,
+            Deleted = deleted,
+            Position = position,
             IsCompleted = false,
             OccurredAt = DateTime.Now
         };

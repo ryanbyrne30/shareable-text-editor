@@ -19,10 +19,10 @@ public class EstablishConnectionService(ILogger<EstablishConnectionService> logg
         }
         
         logger.LogInformation("Client connected to doc [{docId}] with socketId [{socketId}], session {sessionId}", docId, socketId, sessionId);
-        var result = await HandleMessages(docId, socketId, webSocket);
+        var result = await HandleMessages(sessionId, webSocket);
         
         logger.LogInformation("Client [{socketId}] disconnected from doc [{docId}]: {CloseStatusDescription}", socketId, docId, result.CloseStatusDescription);
-        await documentService.DeleteSocketSessions(socketId);
+        await documentService.DeleteSession(sessionId);
     }
     
     private static async Task<WebSocketReceiveResult> ReceiveAsync(WebSocket webSocket, byte[] buffer)
@@ -46,14 +46,14 @@ public class EstablishConnectionService(ILogger<EstablishConnectionService> logg
         }
     }
 
-    private async Task<WebSocketReceiveResult> HandleMessages(string docId, string socketId, WebSocket webSocket)
+    private async Task<WebSocketReceiveResult> HandleMessages(string sessionId, WebSocket webSocket)
     {
         var buffer = new byte[1024 * 4];
         var result = await ReceiveAsync(webSocket, buffer); 
         while (!result.CloseStatus.HasValue)
         {
             var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
-            logger.LogInformation("Received message from client [{socketId}], doc [{docId}]: {message}", socketId, docId, message);
+            logger.LogInformation("Received message from client session [{sessionId}]: {message}", sessionId, message);
             result = await ReceiveAsync(webSocket, buffer); 
         }
         return result;

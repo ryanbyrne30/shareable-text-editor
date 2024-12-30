@@ -1,8 +1,8 @@
 using DocumentAPI.Repositories;
 
-namespace DocumentAPI.Processes.DeleteSocketSessions;
+namespace DocumentAPI.Processes.DeleteSession;
 
-public class DeleteSocketSessionsService(Repository repository, ILogger<DeleteSocketSessionsService> logger)
+public class DeleteSessionService(Repository repository, ILogger<DeleteSessionService> logger)
 {
     public async Task DeleteSessions(string socketId)
     {

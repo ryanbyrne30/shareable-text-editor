@@ -1,7 +1,7 @@
 using DocumentAPI.Processes.CreateDocument;
-using DocumentAPI.Processes.CreateDocumentAction;
 using DocumentAPI.Processes.CreateSession;
-using DocumentAPI.Processes.DeleteSocketSessions;
+using DocumentAPI.Processes.DeleteSession;
+using DocumentAPI.Processes.NewSessionMessage;
 using DocumentAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +16,8 @@ builder.Services.AddDbContext<Repository>(options => options.UseSqlite(connectio
 builder.Services.AddTransient<CreateDocumentActionService>();
 builder.Services.AddTransient<CreateSessionService>();
 builder.Services.AddTransient<CreateDocumentService>();
-builder.Services.AddTransient<DeleteSocketSessionsService>();
+builder.Services.AddTransient<DeleteSessionService>();
+builder.Services.AddTransient<NewSessionMessageService>();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
