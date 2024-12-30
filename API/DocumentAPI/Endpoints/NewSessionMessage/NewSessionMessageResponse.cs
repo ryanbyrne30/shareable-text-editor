@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace DocumentAPI.Processes.NewSessionMessage;
+namespace DocumentAPI.Endpoints.NewSessionMessage;
 
 public class NewSessionMessageResponse
 {

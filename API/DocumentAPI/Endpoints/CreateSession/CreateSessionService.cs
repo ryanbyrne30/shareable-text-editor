@@ -1,7 +1,7 @@
 using DocumentAPI.Domain;
 using DocumentAPI.Repositories;
 
-namespace DocumentAPI.Processes.CreateSession;
+namespace DocumentAPI.Endpoints.CreateSession;
 
 public class CreateSessionService(Repository repository, ILogger<CreateSessionService> logger)
 {

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace DocumentAPI.Processes.CreateDocument;
+namespace DocumentAPI.Endpoints.CreateDocument;
 
 public class CreateDocumentRequest
 {

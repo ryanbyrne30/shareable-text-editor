@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace DocumentAPI.Processes.CreateSession;
+namespace DocumentAPI.Endpoints.CreateSession;
 
 public class CreateSessionRequest
 {

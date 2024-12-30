@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace DocumentAPI.Processes.NewSessionMessage;
+namespace DocumentAPI.Endpoints.NewSessionMessage;
 
 public class NewSessionMessageController(NewSessionMessageService service): ControllerBase
 {

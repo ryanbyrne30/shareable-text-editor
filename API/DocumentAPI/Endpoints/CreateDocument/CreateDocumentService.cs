@@ -1,7 +1,7 @@
 using DocumentAPI.Domain;
 using DocumentAPI.Repositories;
 
-namespace DocumentAPI.Processes.CreateDocument;
+namespace DocumentAPI.Endpoints.CreateDocument;
 
 public class CreateDocumentService(Repository repository)
 {

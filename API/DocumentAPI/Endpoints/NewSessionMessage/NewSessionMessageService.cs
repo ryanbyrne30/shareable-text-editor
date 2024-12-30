@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace DocumentAPI.Processes.NewSessionMessage;
+namespace DocumentAPI.Endpoints.NewSessionMessage;
 
 public class NewSessionMessageService(CreateDocumentActionService createDocumentActionService, ILogger<NewSessionMessageService> logger)
 {

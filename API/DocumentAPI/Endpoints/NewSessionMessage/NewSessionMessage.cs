@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace DocumentAPI.Processes.NewSessionMessage;
+namespace DocumentAPI.Endpoints.NewSessionMessage;
 
 public class NewSessionMessage
 {
@@ -12,8 +12,8 @@ public class NewSessionMessage
     {
         [Required]
         [JsonPropertyName("revision")]
-        [Range(1, ulong.MaxValue, ErrorMessage = "revision must be greater than 0")]
-        public ulong Revision { get; set; }
+        [Range(1, long.MaxValue, ErrorMessage = "revision must be greater than 0")]
+        public long Revision { get; set; }
         
         [Required]
         [JsonPropertyName("position")]

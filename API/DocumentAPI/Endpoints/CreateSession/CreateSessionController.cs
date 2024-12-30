@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace DocumentAPI.Processes.CreateSession;
+namespace DocumentAPI.Endpoints.CreateSession;
 
 public class CreateSessionController(CreateSessionService service): ControllerBase
 {

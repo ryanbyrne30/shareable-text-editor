@@ -1,6 +1,6 @@
 using DocumentAPI.Repositories;
 
-namespace DocumentAPI.Processes.DeleteSession;
+namespace DocumentAPI.Endpoints.DeleteSession;
 
 public class DeleteSessionService(Repository repository, ILogger<DeleteSessionService> logger)
 {

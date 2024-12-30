@@ -7,6 +7,7 @@ public class Document
     public const string IdPrefix = "doc";
     
     [MaxLength(36)]
+    [MinLength(36)]
     public required string Id { get; set; }
     
     [MaxLength(100)]

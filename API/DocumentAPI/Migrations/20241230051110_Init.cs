@@ -17,11 +17,12 @@ namespace DocumentAPI.Migrations
                 {
                     Id = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
                     SessionId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
+                    DocumentId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
                     OccurredAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    IsCompleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CompletedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                     Revision = table.Column<long>(type: "INTEGER", nullable: false),
-                    Position = table.Column<long>(type: "INTEGER", nullable: false),
-                    Deleted = table.Column<long>(type: "INTEGER", nullable: false),
+                    Position = table.Column<ulong>(type: "INTEGER", nullable: false),
+                    Deleted = table.Column<ulong>(type: "INTEGER", nullable: false),
                     Inserted = table.Column<string>(type: "TEXT", maxLength: 10000, nullable: false)
                 },
                 constraints: table =>

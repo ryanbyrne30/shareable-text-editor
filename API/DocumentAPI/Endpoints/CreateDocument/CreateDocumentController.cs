@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace DocumentAPI.Processes.CreateDocument;
+namespace DocumentAPI.Endpoints.CreateDocument;
 
 public class CreateDocumentController(CreateDocumentService service) : ControllerBase
 {

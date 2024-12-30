@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace DocumentAPI.Processes.DeleteSession;
+namespace DocumentAPI.Endpoints.DeleteSession;
 
 public class DeleteSessionController(DeleteSessionService service): ControllerBase
 {

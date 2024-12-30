@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DocumentAPI.Migrations
 {
     [DbContext(typeof(Repository))]
-    [Migration("20241230012738_Init")]
+    [Migration("20241230051110_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -50,21 +50,26 @@ namespace DocumentAPI.Migrations
                         .HasMaxLength(36)
                         .HasColumnType("TEXT");
 
-                    b.Property<long>("Deleted")
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<ulong>("Deleted")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("DocumentId")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Inserted")
                         .IsRequired()
                         .HasMaxLength(10000)
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime>("OccurredAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<long>("Position")
+                    b.Property<ulong>("Position")
                         .HasColumnType("INTEGER");
 
                     b.Property<long>("Revision")

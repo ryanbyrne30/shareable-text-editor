@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
 
-namespace DocumentAPI.Processes.DeleteSession;
+namespace DocumentAPI.Services.WebSocketApiService.SendMessageToSocket;
 
-public class DeleteSessionResponse
+public class SendMessageToSocketResponse
 {
     [JsonPropertyName("message")]
     public required string Message { get; set; }

@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
 
-namespace DocumentAPI.Processes.CreateSession;
+namespace DocumentAPI.Endpoints.CreateDocument;
 
-public class CreateSessionResponse
+public class CreateDocumentResponse
 {
     [JsonPropertyName("id")]
     public required string Id { get; set; }
