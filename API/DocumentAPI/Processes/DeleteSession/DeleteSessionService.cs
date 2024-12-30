@@ -4,11 +4,12 @@ namespace DocumentAPI.Processes.DeleteSession;
 
 public class DeleteSessionService(Repository repository, ILogger<DeleteSessionService> logger)
 {
-    public async Task DeleteSessions(string socketId)
+    public async Task DeleteSession(string sessionId)
     {
-        logger.LogInformation("Delete sessions for socket {socketId}", socketId);
-        var sessions = repository.Sessions.Where(s => s.SocketId == socketId);
-        repository.Sessions.RemoveRange(sessions);
+        logger.LogInformation("Delete session {sessionId}", sessionId);
+        var session = await repository.Sessions.FindAsync(sessionId);
+        if (session == null) throw new BadHttpRequestException("Session not found");
+        repository.Sessions.Remove(session);
         await repository.SaveChangesAsync();
     }
     

@@ -44,10 +44,10 @@ public class HttpRequestService(ILogger<HttpRequestService> logger)
         
         var response = await Client.SendAsync(request);
         response.EnsureSuccessStatusCode();
+        var responseBody = await response.Content.ReadAsStringAsync();
 
         try
         {
-            var responseBody = await response.Content.ReadAsStringAsync();
             var result = JsonSerializer.Deserialize<TResponse>(responseBody);
             
             if (result == null) throw new JsonException("Could not parse JSON response");

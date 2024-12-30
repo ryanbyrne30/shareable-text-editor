@@ -15,7 +15,16 @@
 
 	function onInput(input: string) {
 		if (socket === null) return;
-		socket.send(input);
+		socket.send(
+			JSON.stringify({
+				new_action: {
+					revision: 0,
+					position: 0,
+					deleted: 0,
+					inserted: input
+				}
+			})
+		);
 	}
 
 	onMount(setup);

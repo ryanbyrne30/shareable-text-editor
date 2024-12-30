@@ -7,10 +7,10 @@ public class DeleteSessionController(DeleteSessionService service): ControllerBa
     [HttpDelete("/sessions/session/{sessionId}")]
     public async Task<IActionResult> Delete(string sessionId)
     {
-        await service.DeleteSessions(sessionId);
+        await service.DeleteSession(sessionId);
         var response = new DeleteSessionResponse
         {
-            Message = "Sessions deleted"
+            Message = "Session deleted"
         };
         return Ok(response);
     }

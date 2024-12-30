@@ -2,6 +2,7 @@ using System.Net.WebSockets;
 using System.Text;
 using WebSocketAPI.Services.DocumentService;
 using WebSocketAPI.Services.DocumentService.CreateSession;
+using WebSocketAPI.Services.DocumentService.SendMessage;
 using WebSocketAPI.Stores;
 
 namespace WebSocketAPI.Processes.EstablishConnection;
@@ -54,8 +55,20 @@ public class EstablishConnectionService(ILogger<EstablishConnectionService> logg
         {
             var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
             logger.LogInformation("Received message from client session [{sessionId}]: {message}", sessionId, message);
+            await SendMessage(sessionId, message);
             result = await ReceiveAsync(webSocket, buffer); 
         }
         return result;
+    }
+
+    private async Task SendMessage(string sessionId, string message)
+    {
+        try
+        {
+            await documentService.SendMessage(sessionId, new SendMessageRequest { Message = message });
+        } catch(Exception e)
+        {
+            logger.LogError(e, "Failed to send message to session [{sessionId}]", sessionId);
+        }
     }
 }

@@ -5,8 +5,10 @@ namespace DocumentAPI.Processes.NewSessionMessage;
 public class NewSessionMessageController(NewSessionMessageService service): ControllerBase
 {
     [HttpPost("/sessions/session/{sessionId}")]
-    public async Task Post(string sessionId, [FromBody] NewSessionMessageRequest request)
+    public async Task<IActionResult> Post(string sessionId, [FromBody] NewSessionMessageRequest request)
     {
         await service.HandleNewMessage(sessionId, request);
+        var response = new NewSessionMessageResponse{ Message = "Message received"};
+        return Ok(response);
     }
 }
