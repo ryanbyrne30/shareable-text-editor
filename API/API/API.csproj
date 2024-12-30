@@ -12,6 +12,8 @@
 
     <ItemGroup>
       <Folder Include="ChatRoom\" />
+      <Folder Include="Document2\Repository\" />
+      <Folder Include="Document2\Services\" />
     </ItemGroup>
 
 </Project>
