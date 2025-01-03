@@ -17,10 +17,12 @@ public class DocumentWatcher(ILogger<DocumentWatcher> logger, Repository reposit
                 return;
             }
             
+            var completedActions = QueryCompletedActions(docId, result.Action.Revision);
             var pendingAction = result.Action;
 
             try
             {
+                pendingAction = OperationalTransformation.Transform(pendingAction, completedActions);
                 pendingAction.CompletedAt = DateTime.Now;
                 repository.DocumentActions.Update(pendingAction);
                 await repository.SaveChangesAsync();
@@ -56,6 +58,18 @@ public class DocumentWatcher(ILogger<DocumentWatcher> logger, Repository reposit
         {
             logger.LogError(e, "Failed to query pending action for document {docId}", docId);
             return null;
+        }
+    }
+    
+    private List<DocumentAction> QueryCompletedActions(string docId, int revision)
+    {
+        try
+        {
+            return repository.DocumentActions.Where(a => a.DocumentId == docId && a.CompletedAt != null && a.Revision >= revision).OrderBy(a => a.Revision).ToList();
+        } catch (Exception e)
+        {
+            logger.LogError(e, "Failed to query completed actions for document {docId}", docId);
+            return new List<DocumentAction>();
         }
     }
     
