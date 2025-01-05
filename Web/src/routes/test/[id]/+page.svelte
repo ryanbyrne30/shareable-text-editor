@@ -18,7 +18,7 @@
 		socket.send(
 			JSON.stringify({
 				new_action: {
-					revision: 0,
+					revision: 1,
 					position: 0,
 					deleted: 0,
 					inserted: input
