@@ -15,13 +15,7 @@ public class CreateSessionService(Repository repository, ILogger<CreateSessionSe
         }
 
         var sessionId = Repository.GenerateId(Session.IdPrefix);
-        var session = new Session
-        {
-            Id = sessionId,
-            DocumentId = request.DocumentId,
-            SocketId = request.SocketId,
-            CreatedAt = DateTime.Now
-        };
+        var session = new Session(sessionId, request.DocumentId, request.SocketId);
         await repository.Sessions.AddAsync(session);
         await repository.SaveChangesAsync();
         return sessionId;

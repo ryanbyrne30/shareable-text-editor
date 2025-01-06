@@ -9,12 +9,18 @@
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AThrowHelper_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003F_002Econfig_003FJetBrains_003FRider2024_002E3_003Fresharper_002Dhost_003FDecompilerCache_003Fdecompiler_003F3f3cd0b4987d480f970651aa3aa95311d1bc00_003F42_003F2267c6a7_003FThrowHelper_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AWebApplicationFactory_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003F_002Econfig_003FJetBrains_003FRider2024_002E3_003Fresharper_002Dhost_003FSourcesCache_003F255f916e5a2d424ef01b291afc761e049b367614440bf4b216824ec479064b_003FWebApplicationFactory_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AWebSocket_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003F_002Econfig_003FJetBrains_003FRider2024_002E3_003Fresharper_002Dhost_003FSourcesCache_003F47f4a36743b17ab8ac6a8d24c320d61820fd905af087b433da69e97aef5ff1d_003FWebSocket_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=706ea961_002D946e_002D4fa4_002D9d03_002Df3b47bbe7ac6/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Tests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=706ea961_002D946e_002D4fa4_002D9d03_002Df3b47bbe7ac6/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Tests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
     &lt;TestId&gt;NUnit3x::479279C6-9338-4903-A0F6-14914012CD2D::net9.0::APITests.Tests&lt;/TestId&gt;
     &lt;TestId&gt;NUnit3x::F7B12608-88A9-45BC-A698-7E2998BED0B7::net9.0::DocumentAPIIntegrationTests.Tests.Test1&lt;/TestId&gt;
     &lt;TestId&gt;NUnit3x::F7B12608-88A9-45BC-A698-7E2998BED0B7::net9.0::DocumentAPIIntegrationTests.Tests&lt;/TestId&gt;
     &lt;TestId&gt;NUnit3x::F7B12608-88A9-45BC-A698-7E2998BED0B7::net9.0::DocumentAPIIntegrationTests.NewDocumentActionTests.ValidAction_PersistsAction&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::F7B12608-88A9-45BC-A698-7E2998BED0B7::net9.0::DocumentAPIIntegrationTests.NewDocumentActionTests&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8a27ffda_002D56c6_002D493f_002Db85b_002D1b5637cd7b96/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ValidAction_SendsActionToClients" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;NUnit3x::F7B12608-88A9-45BC-A698-7E2998BED0B7::net9.0::DocumentAPIIntegrationTests.NewDocumentActionTests&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
 	

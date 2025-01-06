@@ -7,9 +7,9 @@ public class WebSocketApiService(HttpRequestService.HttpRequestService requestSe
 {
     private string CreateUrl(string endpoint) => $"{config.WebSocketApiUrl}{endpoint}";
 
-    public async Task SendMessageToSocket(string socketId, string message)
+    public async Task SendMessageToSocket(string socketId, object message)
     {
-        await requestService.Post<SendMessageToSocketRequest, SendMessageToSocketResponse>(CreateUrl($"/sockets/socket/{socketId}"), new SendMessageToSocketRequest { Message = message });
+        await requestService.Post<object, SendMessageToSocketResponse>(CreateUrl($"/sockets/socket/{socketId}"), message);
     }
 
 }

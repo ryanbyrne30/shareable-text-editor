@@ -1,4 +1,3 @@
-using System.Text.Json;
 using DocumentAPI.Domain;
 using DocumentAPI.Repositories;
 using DocumentAPI.Services.WebSocketAPIService;
@@ -88,7 +87,8 @@ public class DocumentWatcher(ILogger<DocumentWatcher> logger, Repository reposit
     {
         try
         {
-            await webSocketService.SendMessageToSocket(socketId, $"ACK: {action.Revision}");
+            var message = SocketMessage.CreateAck(action.Revision);
+            await webSocketService.SendMessageToSocket(socketId, message);
         }
         catch (Exception e)
         {
@@ -100,7 +100,8 @@ public class DocumentWatcher(ILogger<DocumentWatcher> logger, Repository reposit
     {
         try
         {
-            await webSocketService.SendMessageToSocket(socketId, JsonSerializer.Serialize(action));
+            var message = SocketMessage.CreateAction(action.Revision, action.Position, action.Inserted, action.Deleted);
+            await webSocketService.SendMessageToSocket(socketId, message);
         }
         catch (Exception e)
         {

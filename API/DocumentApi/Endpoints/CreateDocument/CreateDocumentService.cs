@@ -8,13 +8,7 @@ public class CreateDocumentService(Repository repository)
     public async Task<string> CreateDocument(CreateDocumentRequest request)
     {
         var docId = Repository.GenerateId(Document.IdPrefix);
-        var document = new Document
-        {
-            Id = docId,
-            Title = request.Title,
-            Content = "",
-            CreatedAt = DateTime.Now
-        };
+        var document = new Document(docId, request.Title);
         await repository.Documents.AddAsync(document);
         await repository.SaveChangesAsync();
         return docId;

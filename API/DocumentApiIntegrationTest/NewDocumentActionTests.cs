@@ -1,95 +1,71 @@
 using System.Net;
-using System.Text;
-using System.Text.Json;
 using DocumentAPI.Domain;
 using DocumentAPI.Endpoints.NewSessionMessage;
+using DocumentAPI.Processes.DocumentWatcher;
 using DocumentAPI.Repositories;
-using DocumentAPIIntegrationTests.Factories;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using DocumentAPIIntegrationTests.Utils;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
-using WireMock.Server;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace DocumentAPIIntegrationTests;
 
 [TestFixture]
 public class NewDocumentActionTests
 {
-    private WireMockServer _mockWebSocketServer;
-    private DocumentApiWebApplicationFactory<Program> _factory;
-    private HttpClient _client;
-    private Repository _repository;
+    private TestDependencies _deps; 
 
     [SetUp]
     public void Setup()
     {
-        _mockWebSocketServer = WireMockServer.Start();
-        _mockWebSocketServer.Given(Request.Create().WithPath("/sockets/socket/{socketId}").UsingPost())
+        _deps = new TestDependencies();
+        _deps.MockWebSocketServer.Given(Request.Create().WithPath("/sockets/socket/{socketId}").UsingPost())
             .RespondWith(Response.Create().WithBody("{\"message\":\"ok\"}").WithStatusCode(200));
-        
-        _factory = new DocumentApiWebApplicationFactory<Program>(_mockWebSocketServer.Urls.First());
-        _client = _factory.CreateClient();
-
-        var scopeFactory = _factory.Services.GetService<IServiceScopeFactory>();
-        if (scopeFactory == null) throw new Exception("Could not get scopeFactory");
-        var scope = scopeFactory.CreateScope();
-        _repository = scope.ServiceProvider.GetRequiredService<Repository>();
     }
 
     [TearDown]
-    public void TearDown()
-    {
-        _client.Dispose();
-        _factory.Dispose();
-        _mockWebSocketServer.Dispose();
-        _repository.Dispose();
-    }
+    public void TearDown() => _deps.Dispose();
 
     [Test]
-    public async Task ValidAction_PersistsAction()
+    public async Task ValidAction_SendsActionToClients()
     {
         // Arrange
-        var action = NewSessionMessage.CreateActionMessage(1, 0, "a", 0);
-        var request = new NewSessionMessageRequest { Message = JsonSerializer.Serialize(action) };
-        var document = new Document
-        {
-            Id = Repository.GenerateId(Document.IdPrefix),
-            Content = "",
-            Title = "My Document",
-            CreatedAt = DateTime.Now
-        };
+        var requestBody = NewSessionMessageRequest.CreateActionMessage(1, 0, "a", 0);
+        var expectedAck = SocketMessage.CreateAck(1);
+        var expectedAction = SocketMessage.CreateAction(1, 0, "a", 0);
+        
+        var document = new Document(Repository.GenerateId(Document.IdPrefix));
+        _deps.Repository.Documents.Add(document);
 
-        var session1 = new Session
-        {
-            Id = Repository.GenerateId(Session.IdPrefix),
-            DocumentId = document.Id,
-            SocketId = "sock_111",
-            CreatedAt = DateTime.Now
-        };
-
-        var session2 = new Session
-        {
-            Id = Repository.GenerateId(Session.IdPrefix),
-            DocumentId = document.Id,
-            SocketId = "sock_222",
-            CreatedAt = DateTime.Now
-        };
-
-        _repository.Documents.Add(document);
-        _repository.Sessions.AddRange([session1, session2]);
-        await _repository.SaveChangesAsync();
+        var session1 = new Session(Repository.GenerateId(Session.IdPrefix), document.Id, "sock_1");
+        var session2 = new Session(Repository.GenerateId(Session.IdPrefix), document.Id, "sock_2");
+        _deps.Repository.Sessions.AddRange([session1, session2]);
+        
+        await _deps.Repository.SaveChangesAsync();
 
         // Act
-        var body = JsonSerializer.Serialize(request);
-        var requestBody = new StringContent(body, Encoding.UTF8, "application/json");
-        var response = await _client.PostAsync($"/sessions/session/{session1.Id}", requestBody); 
+        var response = await _deps.Client.PostAsync($"/sessions/session/{session1.Id}", RequestUtils.JsonContent(requestBody)); 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
-        await Task.Delay(500);
+        await Task.Delay(1000);
         
-        var wsRequest = _mockWebSocketServer.LogEntries.FirstOrDefault(l => l.RequestMessage.Path.Equals($"/sockets/socket/{session1.SocketId}"));
-        Assert.That(wsRequest, Is.Not.Null);
-        Assert.That(wsRequest.RequestMessage.Body, Is.EqualTo("{\"message\":\"ACK: 1\"}"));
+        // Assert
+        var ackRequest = _deps.MockWebSocketServer.LogEntries.FirstOrDefault(l => l.RequestMessage.Path.Equals($"/sockets/socket/{session1.SocketId}"));
+        var ackRequestBody = ackRequest?.RequestMessage.Body;
+        Assert.That(ackRequestBody, Is.Not.Null);
+        var ackMessage = JsonSerializer.Deserialize<SocketMessage>(ackRequestBody);
+        Assert.That(ackMessage?.Ack?.Revision, Is.EqualTo(expectedAck.Ack?.Revision));
+        
+        var actionRequest = _deps.MockWebSocketServer.LogEntries.FirstOrDefault(l => l.RequestMessage.Path.Equals($"/sockets/socket/{session2.SocketId}"));
+        var actionRequestBody = actionRequest?.RequestMessage.Body;
+        Assert.That(actionRequestBody, Is.Not.Null);
+        var actionMessage = JsonSerializer.Deserialize<SocketMessage>(actionRequestBody);
+        Assert.Multiple(() =>
+        {
+            Assert.That(actionMessage?.Action?.Revision, Is.EqualTo(expectedAction.Action?.Revision));
+            Assert.That(actionMessage?.Action?.Position, Is.EqualTo(expectedAction.Action?.Position));
+            Assert.That(actionMessage?.Action?.Inserted, Is.EqualTo(expectedAction.Action?.Inserted));
+            Assert.That(actionMessage?.Action?.Deleted, Is.EqualTo(expectedAction.Action?.Deleted));
+        });
     } 
 }
