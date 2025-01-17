@@ -19,7 +19,12 @@ export class EditorCanvas {
 			this.textRowPadding,
 			textCanvasEl
 		);
-		const cursorCanvas = new CursorCanvas(cursorCanvasEl);
+		const cursorCanvas = new CursorCanvas(
+			this.textHeight,
+			this.textWidth,
+			this.textRowPadding,
+			cursorCanvasEl
+		);
 		const inputController = new InputController(textCanvas, cursorCanvas);
 	}
 }

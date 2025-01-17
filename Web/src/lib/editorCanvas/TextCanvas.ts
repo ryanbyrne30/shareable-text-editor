@@ -1,3 +1,5 @@
+import { EventManager } from './EventManager';
+
 export class TextCanvas {
 	private ctx: CanvasRenderingContext2D;
 
@@ -17,8 +19,9 @@ export class TextCanvas {
 		for (let line of lines) {
 			if (line.length > max) max = line.length;
 		}
-		this.canvasEl.width = max * this.colWidth;
+		this.canvasEl.width = max * this.colWidth + 10;
 		this.canvasEl.height = lines.length * (this.rowHeight + this.rowPadding);
+		EventManager.emitCanvasResizeEvent({ h: this.canvasEl.height, w: this.canvasEl.width });
 	};
 
 	private clearCanvas = () => {
@@ -33,7 +36,11 @@ export class TextCanvas {
 
 		for (let i = 0; i < lines.length; i++) {
 			const yoff = i * (this.rowHeight + this.rowPadding) + this.rowHeight;
-			this.ctx.fillText(lines[i], 0, yoff);
+			const line = lines[i];
+			for (let j = 0; j < line.length; j++) {
+				const xoff = j * this.colWidth;
+				this.ctx.fillText(line[j], xoff, yoff);
+			}
 		}
 	};
 }
