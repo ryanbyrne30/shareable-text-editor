@@ -16,7 +16,7 @@ export class CursorCanvas {
 		if (ctx === null) throw new Error('Could not create context for cursor canvas element');
 		this.ctx = ctx;
 		EventManager.addCursorMoveEventListener(this.onCursorMoveEvent);
-		EventManager.addCanvasResizeEventListener(this.onCanvasResizeEvent);
+		EventManager.addCanvasResizeEventListener(this.onCanvasResize);
 	}
 
 	public clear = () => {
@@ -29,9 +29,9 @@ export class CursorCanvas {
 		return { x, y };
 	};
 
-	private onCanvasResizeEvent = (event: CanvasResizeEvent) => {
-		this.canvasEl.width = event.w * this.colWidth + 10;
-		this.canvasEl.height = event.h * (this.rowHeight + this.rowPadding);
+	private onCanvasResize = (event: CanvasResizeEvent) => {
+		this.canvasEl.width = event.w;
+		this.canvasEl.height = event.h;
 	};
 
 	public draw = () => {
@@ -47,9 +47,5 @@ export class CursorCanvas {
 
 	private onCursorMoveEvent = (event: CursorMoveEvent) => {
 		this.move(event.y, event.x);
-	};
-
-	public getPos = (): { row: number; col: number } => {
-		return { row: this.row, col: this.col };
 	};
 }

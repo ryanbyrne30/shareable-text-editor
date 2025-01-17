@@ -1,5 +1,4 @@
 import { CursorCanvas } from './CursorCanvas';
-import { Document } from './Document';
 import { InputController } from './InputController';
 import { TextCanvas } from './TextCanvas';
 
@@ -14,7 +13,6 @@ export class EditorCanvas {
 		private textCanvasEl: HTMLCanvasElement,
 		private cursorCanvasEl: HTMLCanvasElement
 	) {
-		const document = new Document();
 		const textCanvas = new TextCanvas(
 			this.textHeight,
 			this.textWidth,
@@ -27,6 +25,6 @@ export class EditorCanvas {
 			this.textRowPadding,
 			cursorCanvasEl
 		);
-		const inputController = new InputController(textCanvas, cursorCanvas, document);
+		const inputController = new InputController(textCanvas, cursorCanvas);
 	}
 }

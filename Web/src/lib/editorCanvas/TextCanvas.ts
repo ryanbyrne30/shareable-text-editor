@@ -1,4 +1,4 @@
-import { EventManager, type CanvasResizeEvent } from './EventManager';
+import { EventManager } from './EventManager';
 
 export class TextCanvas {
 	private ctx: CanvasRenderingContext2D;
@@ -12,12 +12,16 @@ export class TextCanvas {
 		const ctx = canvasEl.getContext('2d');
 		if (ctx === null) throw new Error('Could not create context for text canvas element');
 		this.ctx = ctx;
-		EventManager.addCanvasResizeEventListener(this.onCanvasResizeEvent);
 	}
 
-	private onCanvasResizeEvent = (event: CanvasResizeEvent) => {
-		this.canvasEl.width = event.w * this.colWidth + 10;
-		this.canvasEl.height = event.h * (this.rowHeight + this.rowPadding);
+	private scaleCanvasToText = (lines: string[]) => {
+		let max = 0;
+		for (let line of lines) {
+			if (line.length > max) max = line.length;
+		}
+		this.canvasEl.width = max * this.colWidth + 10;
+		this.canvasEl.height = lines.length * (this.rowHeight + this.rowPadding);
+		EventManager.emitCanvasResizeEvent({ h: this.canvasEl.height, w: this.canvasEl.width });
 	};
 
 	private clearCanvas = () => {
@@ -26,6 +30,7 @@ export class TextCanvas {
 
 	public renderText = (text: string) => {
 		const lines = text.split('\n');
+		this.scaleCanvasToText(lines);
 		this.clearCanvas();
 		this.ctx.font = `${this.rowHeight}px monospace`;
 
