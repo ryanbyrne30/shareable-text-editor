@@ -12,7 +12,7 @@ public class SignInUserController(SignInUserService signInUserService): Controll
         var response = signInUserService.SignInUser(request.Username, request.Password);
         return new SignInUserResponse
         {
-            AuthToken = response.AuthToken,
+            AccessToken = response.AccessToken,
             RefreshToken = response.RefreshToken
         };
     }

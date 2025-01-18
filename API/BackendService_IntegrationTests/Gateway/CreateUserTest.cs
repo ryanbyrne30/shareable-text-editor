@@ -4,7 +4,7 @@ using BackendService_IntegrationTests.Utils;
 using BackendService_IntegrationTests.Utils.Mocks;
 using BackendService.Gateway.Endpoints.CreateUser;
 
-namespace BackendService_IntegrationTests.Users;
+namespace BackendService_IntegrationTests.Gateway;
 
 public class CreateUserTests 
 {

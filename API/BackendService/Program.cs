@@ -1,7 +1,7 @@
 using BackendService.Common.Middleware;
-using BackendService.Services.Auth.UseCases;
+using BackendService.Services.Auth.Config;
+using BackendService.Services.Users.Config;
 using BackendService.Services.Users.Repository;
-using BackendService.Services.Users.UseCases;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,20 +9,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Logging
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
+// Database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-// Users
-builder.Services.AddDbContext<UserRepository>(options => options.UseNpgsql(connectionString));
-builder.Services.AddTransient<CreateUserService>();
-builder.Services.AddTransient<GetUserByUserIdService>();
-builder.Services.AddTransient<VerifyUserPasswordService>();
-
-// Auth
-builder.Services.AddTransient<SignInUserService>();
+AuthConfig.Setup(builder.Services, builder.Configuration);
+UsersConfig.Setup(builder.Services, connectionString);
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
@@ -37,13 +33,12 @@ using (var scope = app.Services.CreateScope())
     userRepository.Database.Migrate();
 }
 
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseRouting();
 app.MapControllers();
 app.UseHttpsRedirection();
 app.Run();
 
-namespace BackendService
-{
-    public partial class Program { }
-}
+public partial class Program { }

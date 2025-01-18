@@ -1,4 +1,3 @@
-using BackendService;
 using BackendService.Services.Users.Domain;
 using BackendService.Services.Users.Repository;
 using Microsoft.AspNetCore.Hosting;
@@ -20,6 +19,11 @@ public class CustomWebApplicationFactory: WebApplicationFactory<Program>
     {
         _dbContainer.StartAsync().GetAwaiter().GetResult();
         Environment.SetEnvironmentVariable("ConnectionStrings:DefaultConnection", GetConnectionString());
+        Environment.SetEnvironmentVariable("Jwt:Issuer", "http://localhost:5000");
+        Environment.SetEnvironmentVariable("Jwt:Audience", "http://localhost:5000");
+        Environment.SetEnvironmentVariable("Jwt:Key", "abcdefghijklmnopqrstuvwxyz1234567890");
+        Environment.SetEnvironmentVariable("Jwt:AccessTokenExpirationMinutes", "30");
+        Environment.SetEnvironmentVariable("Jwt:RefreshTokenExpirationDays", "7");
         
         builder.UseEnvironment("Production");
         builder.UseTestServer();

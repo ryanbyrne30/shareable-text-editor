@@ -1,12 +1,15 @@
 using System.Net;
 using System.Net.Http.Json;
+using BackendService_IntegrationTests.Utils;
 using BackendService_IntegrationTests.Utils.Mocks;
+using BackendService.Gateway.Endpoints.SignInUser;
 
-namespace BackendService_IntegrationTests.Users;
+namespace BackendService_IntegrationTests.Gateway;
 
-public class VerifyUserPasswordTest
+public class SignInUserTest
 {
    private readonly CustomWebApplicationFactory _factory = new();
+   private const string Endpoint = "/api/v1/auth/sign-in";
    
    [TearDown]
    public void TearDown()
@@ -24,14 +27,22 @@ public class VerifyUserPasswordTest
          context.SaveChanges();
       });
       var client = _factory.CreateClient();
-      var request = new
+
+      var request = new SignInUserRequest
       {
-         username = user.Username,
-         password = UserMock.Password 
+         Username = user.Username,
+         Password = UserMock.Password
       };
       
-      var response = await client.PostAsJsonAsync("/api/v1/users/validate-password", request);
+      var response = await client.PostAsJsonAsync(Endpoint, request);
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+      var received = RequestUtils.ParseResponse<SignInUserResponse>(response);
+      Assert.Multiple(() =>
+      {
+         Assert.That(received.AccessToken, Is.Not.Null);
+         Assert.That(received.RefreshToken, Is.Not.Null);
+      });
    }
    
    [Test]
@@ -50,7 +61,7 @@ public class VerifyUserPasswordTest
          password = "RandomPassword" 
       };
       
-      var response = await client.PostAsJsonAsync("/api/v1/users/validate-password", request);
+      var response = await client.PostAsJsonAsync(Endpoint, request);
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
    }
    
@@ -64,7 +75,7 @@ public class VerifyUserPasswordTest
          password = "RandomPassword" 
       };
       
-      var response = await client.PostAsJsonAsync("/api/v1/users/validate-password", request);
+      var response = await client.PostAsJsonAsync(Endpoint, request);
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
    }
 }
