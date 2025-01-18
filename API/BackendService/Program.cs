@@ -1,6 +1,7 @@
 using DocumentService.Common.Middleware;
 using DocumentService.Users.Endpoints.CreateUser;
 using DocumentService.Users.Endpoints.GetUserByUserId;
+using DocumentService.Users.Endpoints.VerifyUserPassword;
 using DocumentService.Users.Repository;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<UserRepository>(options => options.UseNpgsql(connectionString));
 builder.Services.AddTransient<CreateUserService>();
 builder.Services.AddTransient<GetUserByUserIdService>();
+builder.Services.AddTransient<VerifyUserPasswordService>();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

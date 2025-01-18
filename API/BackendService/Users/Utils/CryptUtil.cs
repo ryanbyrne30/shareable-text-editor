@@ -9,4 +9,9 @@ public static class CryptUtil
     {
         return new PasswordHasher<User>().HashPassword(user, password);
     }
+    
+    public static bool VerifyPassword(User user, string password, string hashedPassword)
+    {
+        return new PasswordHasher<User>().VerifyHashedPassword(user, hashedPassword, password) == PasswordVerificationResult.Success;
+    }
 }
