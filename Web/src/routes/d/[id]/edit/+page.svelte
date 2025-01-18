@@ -76,7 +76,7 @@
 </div>
 <main
 	class={twMerge(
-		'grid h-[calc(100dvh-6rem)]',
+		'grid h-[calc(100dvh-72px)]',
 		orientation === 'horizontal' ? 'grid-cols-1 grid-rows-2' : 'grid-cols-2 grid-rows-1',
 		!showPreview ? 'grid-cols-1 grid-rows-1' : ''
 	)}

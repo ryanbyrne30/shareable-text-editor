@@ -1,0 +1,6 @@
+﻿services:
+  documentservice:
+    image: documentservice
+    build:
+      context: .
+      dockerfile: DocumentService/Dockerfile
