@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Testcontainers.PostgreSql;
 
 namespace BackendService_IntegrationTests;
@@ -29,5 +28,26 @@ public class CustomWebApplicationFactory: WebApplicationFactory<Program>
             services.Remove(services.Single(service => typeof(UserRepository) == service.ServiceType));
             services.AddDbContext<UserRepository>((_, option) => option.UseNpgsql(GetConnectionString()));
         });
+    }
+    
+    public void SeedUserData(Action<UserRepository> seedAction)
+    {
+        using var scope = Services.CreateScope();
+        var userRepository = scope.ServiceProvider.GetRequiredService<UserRepository>();
+        seedAction(userRepository);
+    }
+
+    private void ClearUserData()
+    {
+        using var scope = Services.CreateScope();
+        var userRepository = scope.ServiceProvider.GetRequiredService<UserRepository>();
+        var users = userRepository.Users.ToList();
+        userRepository.Users.RemoveRange(users);
+        userRepository.SaveChanges();
+    }
+    
+    public void ClearData()
+    {
+        ClearUserData();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using BackendService_IntegrationTests.Utils;
+using BackendService_IntegrationTests.Utils.Mocks;
 using DocumentService.Users.Endpoints.CreateUser;
 using DocumentService.Users.Endpoints.GetUserByUserId;
 
@@ -8,23 +9,21 @@ namespace BackendService_IntegrationTests.Users;
 
 public class CreateUserTests 
 {
-    private readonly CustomWebApplicationFactory _webApplicationFactory = new();
-
-    private HttpClient GetClient() => _webApplicationFactory.CreateClient();
-
-    [OneTimeTearDown]
-    public void Teardown()
-    {
-        _webApplicationFactory.Dispose();
-    }
+    private readonly CustomWebApplicationFactory _factory = new();
     
+    [TearDown]
+    public void TearDown()
+    {
+        _factory.ClearData();
+    }
+
     [Test]
     public async Task validRequest_shouldCreateUser()
     {
         const string username = "username";
         const string password = "Pa$$word1";
         var request = new CreateUserRequest(username, password);
-        var client = GetClient();
+        var client = _factory.CreateClient();
         
         var createResponse = await client.PostAsJsonAsync("/api/v1/users", request);
         
@@ -34,10 +33,7 @@ public class CreateUserTests
         Assert.That(body.Id, Is.Not.Null);
 
         // confirm user is persisted 
-        var getResponse = await client.GetAsync($"/api/v1/users/{body.Id}");
-        
-        Assert.That(getResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        var user = RequestUtils.ParseResponse<GetUserByUserIdResponse>(getResponse);
+        var user = await UserMock.FetchUserById(client, body.Id);
         Assert.Multiple(() =>
         {
             Assert.That(user, Is.Not.Null);
@@ -58,10 +54,27 @@ public class CreateUserTests
     public async Task badRequest_shouldReturnBadRequest(string username, string password)
     {
         var request = new CreateUserRequest(username, password);
-        var client = GetClient();
+        var client = _factory.CreateClient();
         
         var response = await client.PostAsJsonAsync("/api/v1/users", request);
         
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+    }
+    
+    [Test]
+    public async Task duplicateUser_shouldReturnConflict()
+    {
+        var user = UserMock.GenerateUser();
+        _factory.SeedUserData(context =>
+        {
+            context.Users.Add(user);
+            context.SaveChanges();
+        });
+        var request = new CreateUserRequest(user.Username, "Pa$$word1");
+        var client = _factory.CreateClient();
+        
+        var response = await client.PostAsJsonAsync("/api/v1/users", request);
+        
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Conflict));
     }
 }

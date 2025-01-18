@@ -1,3 +1,4 @@
+using DocumentService.Common.Middleware;
 using DocumentService.Users.Endpoints.CreateUser;
 using DocumentService.Users.Endpoints.GetUserByUserId;
 using DocumentService.Users.Repository;
@@ -32,6 +33,7 @@ using (var scope = app.Services.CreateScope())
     userRepository.Database.Migrate();
 }
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseRouting();
 app.MapControllers();
 app.UseHttpsRedirection();
