@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using DocumentService.Users.Attributes;
+using BackendService.Gateway.Attributes;
 
 namespace BackendService_UnitTests.Users.Attributes;
 

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
-namespace DocumentService.Users.Attributes;
+namespace BackendService.Gateway.Attributes;
 
 public partial class UsernameValidationAttribute: ValidationAttribute
 {

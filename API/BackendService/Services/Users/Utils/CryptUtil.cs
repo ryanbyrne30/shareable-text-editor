@@ -1,7 +1,7 @@
-using DocumentService.Users.Domain;
+using BackendService.Services.Users.Domain;
 using Microsoft.AspNetCore.Identity;
 
-namespace DocumentService.Users.Utils;
+namespace BackendService.Services.Users.Utils;
 
 public static class CryptUtil
 {

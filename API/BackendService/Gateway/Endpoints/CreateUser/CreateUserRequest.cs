@@ -1,12 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using DocumentService.Users.Attributes;
+using BackendService.Gateway.Attributes;
 
-namespace DocumentService.Users.Endpoints.CreateUser;
+namespace BackendService.Gateway.Endpoints.CreateUser;
 
 public sealed class CreateUserRequest(string username, string password)
 {
-
     [Required]
     [UsernameValidation]
     [JsonPropertyName("username")]

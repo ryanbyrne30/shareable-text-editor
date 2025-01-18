@@ -1,22 +1,24 @@
 using System.Net;
-using DocumentService.Common;
-using DocumentService.Common.Exceptions;
-using DocumentService.Users.Domain;
-using DocumentService.Users.Repository;
-using DocumentService.Users.Utils;
+using BackendService.Common;
+using BackendService.Common.Exceptions;
+using BackendService.Services.Users.Domain;
+using BackendService.Services.Users.Repository;
+using BackendService.Services.Users.Utils;
 
-namespace DocumentService.Users.Endpoints.CreateUser;
+namespace BackendService.Services.Users.UseCases;
 
 public class CreateUserService(UserRepository repository)
 {
-   public async Task<string> CreateUser(CreateUserRequest request)
+   public sealed record Request(string Username, string Password);
+   
+   public async Task<string> CreateUser(Request request)
    {
       var user = CreateUserEntity(request);
       await SaveUser(user);
       return user.Id;
    }
 
-   private static User CreateUserEntity(CreateUserRequest request)
+   private static User CreateUserEntity(Request request)
    {
       var id = DatabaseUtil.GenerateId(User.IdPrefix);
       var user = new User

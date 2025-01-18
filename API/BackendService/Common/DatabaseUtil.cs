@@ -1,4 +1,4 @@
-namespace DocumentService.Common;
+namespace BackendService.Common;
 
 public static class DatabaseUtil
 {

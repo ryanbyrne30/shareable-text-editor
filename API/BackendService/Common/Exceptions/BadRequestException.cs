@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace DocumentService.Common.Exceptions;
+namespace BackendService.Common.Exceptions;
 
 public class BadRequestException: Exception
 {

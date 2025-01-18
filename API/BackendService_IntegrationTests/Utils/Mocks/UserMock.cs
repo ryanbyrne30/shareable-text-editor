@@ -1,7 +1,6 @@
-using DocumentService.Common;
-using DocumentService.Users.Domain;
-using DocumentService.Users.Endpoints.GetUserByUserId;
-using DocumentService.Users.Utils;
+using BackendService.Common;
+using BackendService.Services.Users.Domain;
+using BackendService.Services.Users.Utils;
 
 namespace BackendService_IntegrationTests.Utils.Mocks;
 
@@ -22,11 +21,5 @@ public static class UserMock
         user.PasswordHash = hash;
 
         return user;
-    }
-
-    public static async Task<GetUserByUserIdResponse> FetchUserById(HttpClient client, string id)
-    {
-        var response = await client.GetAsync($"/api/v1/users/{id}");
-        return RequestUtils.ParseResponse<GetUserByUserIdResponse>(response);
     }
 }

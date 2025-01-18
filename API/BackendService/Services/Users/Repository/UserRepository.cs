@@ -1,7 +1,7 @@
-using DocumentService.Users.Domain;
+using BackendService.Services.Users.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace DocumentService.Users.Repository;
+namespace BackendService.Services.Users.Repository;
 
 public class UserRepository(DbContextOptions options): DbContext(options)
 {

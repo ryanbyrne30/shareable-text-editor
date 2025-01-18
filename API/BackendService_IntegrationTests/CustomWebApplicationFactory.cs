@@ -1,4 +1,6 @@
-using DocumentService.Users.Repository;
+using BackendService;
+using BackendService.Services.Users.Domain;
+using BackendService.Services.Users.Repository;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -35,6 +37,13 @@ public class CustomWebApplicationFactory: WebApplicationFactory<Program>
         using var scope = Services.CreateScope();
         var userRepository = scope.ServiceProvider.GetRequiredService<UserRepository>();
         seedAction(userRepository);
+    }
+    
+    public async Task<User?> GetUserById(string id)
+    {
+        using var scope = Services.CreateScope();
+        var userRepository = scope.ServiceProvider.GetRequiredService<UserRepository>();
+        return await userRepository.Users.FindAsync(id);
     }
 
     private void ClearUserData()

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace DocumentService.Users.Endpoints.CreateUser;
+namespace BackendService.Gateway.Endpoints.CreateUser;
 
 public class CreateUserResponse(string id)
 {

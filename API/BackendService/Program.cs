@@ -1,8 +1,7 @@
-using DocumentService.Common.Middleware;
-using DocumentService.Users.Endpoints.CreateUser;
-using DocumentService.Users.Endpoints.GetUserByUserId;
-using DocumentService.Users.Endpoints.VerifyUserPassword;
-using DocumentService.Users.Repository;
+using BackendService.Common.Middleware;
+using BackendService.Services.Auth.UseCases;
+using BackendService.Services.Users.Repository;
+using BackendService.Services.Users.UseCases;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +20,9 @@ builder.Services.AddDbContext<UserRepository>(options => options.UseNpgsql(conne
 builder.Services.AddTransient<CreateUserService>();
 builder.Services.AddTransient<GetUserByUserIdService>();
 builder.Services.AddTransient<VerifyUserPasswordService>();
+
+// Auth
+builder.Services.AddTransient<SignInUserService>();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
@@ -41,4 +43,7 @@ app.MapControllers();
 app.UseHttpsRedirection();
 app.Run();
 
-public partial class Program { }
+namespace BackendService
+{
+    public partial class Program { }
+}

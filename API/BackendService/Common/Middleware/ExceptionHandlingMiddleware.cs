@@ -1,7 +1,7 @@
 using System.Net;
-using DocumentService.Common.Exceptions;
+using BackendService.Common.Exceptions;
 
-namespace DocumentService.Common.Middleware;
+namespace BackendService.Common.Middleware;
 
 public class ExceptionHandlingMiddleware(RequestDelegate next)
 {

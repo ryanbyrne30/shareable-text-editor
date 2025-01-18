@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace DocumentService.Users.Domain;
+namespace BackendService.Services.Users.Domain;
 
 [Index(nameof(Username), IsUnique = true)]
 public class User

@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace DocumentService.Users.Endpoints.VerifyUserPassword;
+namespace BackendService.Gateway.Endpoints.SignInUser;
 
-public class VerifyUserPasswordRequest
+public class SignInUserRequest
 {
     [JsonPropertyName("username")]
     [MaxLength(100)]

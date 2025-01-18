@@ -2,8 +2,7 @@
 using System.Net.Http.Json;
 using BackendService_IntegrationTests.Utils;
 using BackendService_IntegrationTests.Utils.Mocks;
-using DocumentService.Users.Endpoints.CreateUser;
-using DocumentService.Users.Endpoints.GetUserByUserId;
+using BackendService.Gateway.Endpoints.CreateUser;
 
 namespace BackendService_IntegrationTests.Users;
 
@@ -32,13 +31,13 @@ public class CreateUserTests
         var body = RequestUtils.ParseResponse<CreateUserResponse>(createResponse);
         Assert.That(body.Id, Is.Not.Null);
 
-        // confirm user is persisted 
-        var user = await UserMock.FetchUserById(client, body.Id);
+        // confirm user is persisted
+        var user = await _factory.GetUserById(body.Id);
         Assert.Multiple(() =>
         {
             Assert.That(user, Is.Not.Null);
-            Assert.That(user.Username, Is.EqualTo(username));
-            Assert.That(user.UpdatedAt, Is.Null);
+            Assert.That(user?.Username, Is.EqualTo(username));
+            Assert.That(user?.UpdatedAt, Is.Null);
         });
     }
     
