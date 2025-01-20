@@ -1,5 +1,4 @@
 using System.Net;
-using System.Text.Json;
 using BackendService.Common.Exceptions;
 using BackendService.Common.Responses;
 
@@ -33,5 +32,4 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
         context.Response.StatusCode = (int)statusCode;
         await context.Response.WriteAsJsonAsync(response); 
     }
-    
 }

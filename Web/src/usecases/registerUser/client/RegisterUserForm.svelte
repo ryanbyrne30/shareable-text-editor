@@ -31,10 +31,8 @@
 		error = '';
 		const data = FormUtils.formData(e);
 		formErrors.validate(data);
-
 		if (data['password'] !== data['passwordConfirm'])
 			formErrors.addError('passwordConfirm', 'Passwords do not match.');
-
 		if (!formErrors.isValid()) return;
 		$mutation.mutate(formErrors.getValidData());
 	}
@@ -58,9 +56,9 @@
 			<TextInput type="text" name="username" required />
 		</FormFieldLabel>
 		{#each $errors.username ?? [] as e}
-			<FormFieldError>
+			<formfielderror>
 				{e}
-			</FormFieldError>
+			</formfielderror>
 		{/each}
 	</FormField>
 	<FormField>

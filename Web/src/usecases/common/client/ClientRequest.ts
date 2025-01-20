@@ -1,6 +1,5 @@
 import { z, ZodType } from 'zod';
-import { HttpStatusCode } from '../server';
-import { errorResponseSchema } from '../common';
+import { errorResponseSchema, HttpStatusCode } from '../common';
 
 export type ApiResponse<T> = {
 	data?: T;

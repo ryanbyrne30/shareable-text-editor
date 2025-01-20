@@ -82,7 +82,7 @@ export class Endpoint {
 	public static sendJsonRequest = async <T extends ZodType>(
 		url: string,
 		responseSchema: T,
-		options?: Omit<RequestInit, 'body'> & { body: unknown }
+		options?: Omit<RequestInit, 'body'> & { body?: unknown }
 	): Promise<z.infer<T>> => {
 		const body = options?.body ? JSON.stringify(options.body) : undefined;
 		const response = await fetch(url, {

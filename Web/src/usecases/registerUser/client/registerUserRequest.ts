@@ -3,8 +3,7 @@ import {
 	type RegisterUserFormSchema,
 	type RegisterUserResponseSchema
 } from '../common';
-import type { ApiResponse } from '@/usecases/common/client/responses';
-import { ClientRequest } from '@/usecases/common/client/ClientRequest';
+import { ClientRequest, type ApiResponse } from '@/usecases/common/client/ClientRequest';
 
 export type RegisterUserResult = ApiResponse<RegisterUserResponseSchema>;
 

@@ -14,7 +14,7 @@
 	}
 </script>
 
-<div class="relative flex w-fit flex-row items-center">
+<div class="relative flex flex-row items-center">
 	<TextInput {...restProps} class={twMerge('pr-10', className)} type={inputType} />
 	<button type="button" {onclick} class="absolute right-0 bg-primary-foreground p-1">
 		{#if inputType === 'password'}

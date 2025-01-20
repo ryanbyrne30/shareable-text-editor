@@ -2,9 +2,12 @@
 	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query';
 	import '../app.css';
 	import { ModeWatcher } from 'mode-watcher';
+	import { updateUserStore } from '@/usecases/common/client/stores/userStore';
+	import { onMount } from 'svelte';
 	let { children } = $props();
 
 	const queryClient = new QueryClient();
+	onMount(updateUserStore);
 </script>
 
 <ModeWatcher />

@@ -42,10 +42,10 @@ using (var scope = app.Services.CreateScope())
     userRepository.Database.Migrate();
 }
 
-app.UseAuthentication();
-app.UseAuthorization();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 app.UseHttpsRedirection();
 app.Run();

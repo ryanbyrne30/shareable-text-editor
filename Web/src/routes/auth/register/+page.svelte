@@ -5,6 +5,6 @@
 
 <main class="flex h-dvh w-dvw flex-col items-center justify-center">
 	<Card>
-		<RegisterUserForm onsuccess={() => alert('Success')} />
+		<RegisterUserForm onsuccess={() => (location.href = '/auth/sign-in')} />
 	</Card>
 </main>

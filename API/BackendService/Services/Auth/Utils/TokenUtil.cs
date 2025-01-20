@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BackendService.Services.Auth.Utils;
 
-public class TokenUtil(IOptions<AuthConfig> authConfig)
+public class TokenUtil(IOptions<AuthConfig> authConfig, ILogger<TokenUtil> logger)
 {
     public string CreateAccessToken(string userId, string username)
     {
@@ -40,5 +40,36 @@ public class TokenUtil(IOptions<AuthConfig> authConfig)
         using var rng = RandomNumberGenerator.Create();
         rng.GetBytes(randomNumber);
         return Convert.ToBase64String(randomNumber);
+    }
+    
+    public ClaimsPrincipal? ValidateAccessToken(string token)
+    {
+        var config = authConfig.Value;
+        
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.Key));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var tokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = creds.Key,
+            ValidateIssuer = true,
+            ValidIssuer = config.Issuer,
+            ValidateAudience = true,
+            ValidAudience = config.Audience,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
+        };
+        
+        var tokenHandler = new JwtSecurityTokenHandler();
+
+        try
+        {
+            return tokenHandler.ValidateToken(token, tokenValidationParameters, out _);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error validating access token: {Message}", ex.Message);
+            return null;
+        }
     }
 }
