@@ -1,10 +1,9 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import type { z, ZodType } from 'zod';
-import { BadRequestError, InternalServerError } from './Exceptions';
-import type { ErrorResponseSchema } from '@/usecases/common/common/responses/errorResponse';
+import { BadRequestError, InternalServerError } from './errors';
 import { Logger } from './Logger';
-import { HttpStatusCode } from '@/usecases/common/server/StatusCodes';
-import { backendErrorResponseSchema } from '@/usecases/common/common/responses/backendErrorResponse';
+import { HttpStatusCode } from '@/usecases/common/common/HttpStatusCode';
+import { errorResponseSchema, type ErrorResponseSchema } from '../common';
 
 type Promisable<T> = T | Promise<T>;
 export type EndpointHandler = (event: RequestEvent) => Promisable<Response>;
@@ -103,7 +102,7 @@ export class Endpoint {
 
 	private static handleUnexpectedResponse = async (response: Response) => {
 		const data = await response.json();
-		const parsed = backendErrorResponseSchema.safeParse(data);
+		const parsed = errorResponseSchema.safeParse(data);
 		if (!parsed.success)
 			throw new InternalServerError('Unexpected error response from backend', parsed.error);
 		throw new BadRequestError({

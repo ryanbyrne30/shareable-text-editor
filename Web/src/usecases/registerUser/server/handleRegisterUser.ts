@@ -1,8 +1,7 @@
 import { registerUserFormSchema, type RegisterUserResponseSchema } from '../common';
 import { z } from 'zod';
 import type { RequestEvent } from '@sveltejs/kit';
-import { Endpoint } from '@/server/Endpoint';
-import { backendServer } from '@/server/services';
+import { backendServer, Endpoint } from '@/usecases/common/server';
 
 const expectedResponseSchema = z.object({
 	id: z.string()

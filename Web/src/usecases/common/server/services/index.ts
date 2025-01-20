@@ -1,4 +1,4 @@
-import { env } from '@/usecases/common/server';
+import { env } from '../env';
 import { BackendServer } from './BackendServer';
 
 export const backendServer = new BackendServer(env.BACKEND_SERVER_URL);

@@ -8,12 +8,11 @@
 		TextInput
 	} from '@/lib/components/form';
 	import { Button } from '@/lib/components/interact';
-	import { FormErrorState } from '@/lib/utils/FormErrorState';
-	import { FormUtils } from '@/lib/utils/FormUtils';
-	import { registerUserFormSchema, type RegisterUserResponseSchema } from '../common';
+	import { registerUserFormSchema } from '../common';
 	import { z } from 'zod';
 	import { useMutation } from '@sveltestack/svelte-query';
 	import { registerUserRequest, type RegisterUserResult } from './registerUserRequest';
+	import { FormErrorState, FormUtils } from '@/usecases/common/client';
 
 	const { errors, ...formErrors } = new FormErrorState(
 		registerUserFormSchema.merge(

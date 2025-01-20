@@ -1,4 +1,4 @@
-import { HttpStatusCode } from '@/usecases/common/server/StatusCodes';
+import { HttpStatusCode } from '@/usecases/common/common/HttpStatusCode';
 import type { z, ZodError } from 'zod';
 
 type ErrorsType = Record<string, string[] | undefined>;
