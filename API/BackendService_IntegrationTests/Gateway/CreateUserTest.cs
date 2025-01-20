@@ -2,7 +2,7 @@
 using System.Net.Http.Json;
 using BackendService_IntegrationTests.Utils;
 using BackendService_IntegrationTests.Utils.Mocks;
-using BackendService.Gateway.Endpoints.CreateUser;
+using BackendService.Gateway.Endpoints.RegisterUser;
 
 namespace BackendService_IntegrationTests.Gateway;
 
@@ -21,14 +21,14 @@ public class CreateUserTests
     {
         const string username = "username";
         const string password = "Pa$$word1";
-        var request = new CreateUserRequest(username, password);
+        var request = new RegisterUserRequest(username, password);
         var client = _factory.CreateClient();
         
         var createResponse = await client.PostAsJsonAsync("/api/v1/users", request);
         
         Assert.That(createResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         
-        var body = RequestUtils.ParseResponse<CreateUserResponse>(createResponse);
+        var body = RequestUtils.ParseResponse<RegisterUserResponse>(createResponse);
         Assert.That(body.Id, Is.Not.Null);
 
         // confirm user is persisted
@@ -52,7 +52,7 @@ public class CreateUserTests
     [TestCase("abc.123", "Pa$$word")]
     public async Task badRequest_shouldReturnBadRequest(string username, string password)
     {
-        var request = new CreateUserRequest(username, password);
+        var request = new RegisterUserRequest(username, password);
         var client = _factory.CreateClient();
         
         var response = await client.PostAsJsonAsync("/api/v1/users", request);
@@ -69,7 +69,7 @@ public class CreateUserTests
             context.Users.Add(user);
             context.SaveChanges();
         });
-        var request = new CreateUserRequest(user.Username, "Pa$$word1");
+        var request = new RegisterUserRequest(user.Username, "Pa$$word1");
         var client = _factory.CreateClient();
         
         var response = await client.PostAsJsonAsync("/api/v1/users", request);

@@ -1,9 +1,11 @@
 using System.Net;
+using System.Text.Json;
 using BackendService.Common.Exceptions;
+using BackendService.Common.Responses;
 
 namespace BackendService.Common.Middleware;
 
-public class ExceptionHandlingMiddleware(RequestDelegate next)
+public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
 {
     public async Task InvokeAsync(HttpContext context)
     {
@@ -13,14 +15,23 @@ public class ExceptionHandlingMiddleware(RequestDelegate next)
         }
         catch (BadRequestException ex)
         {
-            context.Response.StatusCode = (int) ex.StatusCode;
-            await context.Response.WriteAsync(ex.Message);
+            await HandleException(context, ex.StatusCode, ex.Message);
         }
         catch (Exception ex)
         {
-            context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
-            await context.Response.WriteAsync("An unexpected error occurred.");
+            logger.LogCritical(ex, "Internal error occured: {message}", ex.Message);
+            await HandleException(context, HttpStatusCode.InternalServerError, "An unexpected error occurred.");
         }
+    }
+
+    private static async Task HandleException(HttpContext context, HttpStatusCode statusCode, string message)
+    {
+        var response = new ErrorResponse
+        {
+            Message = message
+        };
+        context.Response.StatusCode = (int)statusCode;
+        await context.Response.WriteAsJsonAsync(response); 
     }
     
 }

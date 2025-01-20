@@ -7,6 +7,13 @@
         "request": "launch",
         "command": "npm run dev",
         "cwd": "${workspaceFolder}"
+      },
+      {
+        "name": "Run unit tests",
+        "type": "node-terminal",
+        "request": "launch",
+        "command": "npm run test:unit",
+        "cwd": "${workspaceFolder}"
       }
     ]
   }

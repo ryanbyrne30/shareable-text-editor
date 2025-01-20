@@ -2,9 +2,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using BackendService.Gateway.Attributes;
 
-namespace BackendService.Gateway.Endpoints.CreateUser;
+namespace BackendService.Gateway.Endpoints.RegisterUser;
 
-public sealed class CreateUserRequest(string username, string password)
+public sealed class RegisterUserRequest(string username, string password)
 {
     [Required]
     [UsernameValidation]
