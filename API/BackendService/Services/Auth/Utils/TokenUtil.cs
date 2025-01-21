@@ -10,6 +10,9 @@ namespace BackendService.Services.Auth.Utils;
 
 public class TokenUtil(IOptions<AuthConfig> authConfig, ILogger<TokenUtil> logger)
 {
+    public DateTime AccessTokenExpirationMinutes() => DateTime.Now.AddMinutes(authConfig.Value.AccessTokenExpirationMinutes).ToUniversalTime(); 
+    public DateTime RefreshTokenExpirationMinutes() => DateTime.Now.AddDays(authConfig.Value.RefreshTokenExpirationDays).ToUniversalTime(); 
+        
     public string CreateAccessToken(string userId, string username)
     {
         var config = authConfig.Value;
@@ -28,7 +31,7 @@ public class TokenUtil(IOptions<AuthConfig> authConfig, ILogger<TokenUtil> logge
             issuer: config.Issuer,
             audience: config.Audience,
             claims: claims,
-            expires: DateTime.Now.AddMinutes(config.AccessTokenExpirationMinutes),
+            expires: AccessTokenExpirationMinutes(), 
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

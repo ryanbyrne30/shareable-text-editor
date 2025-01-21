@@ -7,9 +7,9 @@ namespace BackendService.Gateway.Endpoints.SignInUser;
 public class SignInUserController(SignInUserService signInUserService): ControllerBase
 {
     [HttpPost("/api/v1/auth/sign-in")]
-    public ActionResult<SignInUserResponse> SignInUser([FromBody] SignInUserRequest request)
+    public async Task<ActionResult<SignInUserResponse>> SignInUser([FromBody] SignInUserRequest request)
     {
-        var response = signInUserService.SignInUser(request.Username, request.Password);
+        var response = await signInUserService.SignInUser(request.Username, request.Password);
         return new SignInUserResponse
         {
             AccessToken = response.AccessToken,

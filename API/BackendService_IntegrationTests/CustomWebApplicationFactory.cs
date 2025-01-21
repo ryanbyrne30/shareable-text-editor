@@ -1,5 +1,5 @@
+using BackendService.Common.Repositories;
 using BackendService.Services.Users.Domain;
-using BackendService.Services.Users.Repository;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -30,30 +30,30 @@ public class CustomWebApplicationFactory: WebApplicationFactory<Program>
 
         builder.ConfigureServices(services =>
         {
-            services.Remove(services.Single(service => typeof(DbContextOptions<UserRepository>) == service.ServiceType));
-            services.Remove(services.Single(service => typeof(UserRepository) == service.ServiceType));
-            services.AddDbContext<UserRepository>((_, option) => option.UseNpgsql(GetConnectionString()));
+            services.Remove(services.Single(service => typeof(DbContextOptions<AppRepository>) == service.ServiceType));
+            services.Remove(services.Single(service => typeof(AppRepository) == service.ServiceType));
+            services.AddDbContext<AppRepository>((_, option) => option.UseNpgsql(GetConnectionString()));
         });
     }
     
-    public void SeedUserData(Action<UserRepository> seedAction)
+    public void SeedUserData(Action<AppRepository> seedAction)
     {
         using var scope = Services.CreateScope();
-        var userRepository = scope.ServiceProvider.GetRequiredService<UserRepository>();
+        var userRepository = scope.ServiceProvider.GetRequiredService<AppRepository>();
         seedAction(userRepository);
     }
     
     public async Task<User?> GetUserById(string id)
     {
         using var scope = Services.CreateScope();
-        var userRepository = scope.ServiceProvider.GetRequiredService<UserRepository>();
+        var userRepository = scope.ServiceProvider.GetRequiredService<AppRepository>();
         return await userRepository.Users.FindAsync(id);
     }
 
     private void ClearUserData()
     {
         using var scope = Services.CreateScope();
-        var userRepository = scope.ServiceProvider.GetRequiredService<UserRepository>();
+        var userRepository = scope.ServiceProvider.GetRequiredService<AppRepository>();
         var users = userRepository.Users.ToList();
         userRepository.Users.RemoveRange(users);
         userRepository.SaveChanges();

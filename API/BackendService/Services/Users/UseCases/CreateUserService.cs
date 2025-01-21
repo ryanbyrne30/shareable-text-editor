@@ -1,13 +1,13 @@
 using System.Net;
 using BackendService.Common;
 using BackendService.Common.Exceptions;
+using BackendService.Common.Repositories;
 using BackendService.Services.Users.Domain;
-using BackendService.Services.Users.Repository;
 using BackendService.Services.Users.Utils;
 
 namespace BackendService.Services.Users.UseCases;
 
-public class CreateUserService(UserRepository repository)
+public class CreateUserService(AppRepository repository)
 {
    public sealed record Request(string Username, string Password);
    

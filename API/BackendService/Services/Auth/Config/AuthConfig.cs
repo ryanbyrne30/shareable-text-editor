@@ -8,7 +8,7 @@ namespace BackendService.Services.Auth.Config;
 
 public class AuthConfig
 {
-    private const int minKeyLength = 32;
+    private const int MinKeyLength = 32;
     public required string Issuer { get; set; }
     public required string Audience { get; set; }
     public required string Key { get; set; }
@@ -23,7 +23,7 @@ public class AuthConfig
         var accessTokenExpirationMinutes = int.Parse(ConfigUtil.GetEnvVar(configuration, "Jwt:AccessTokenExpirationMinutes"));
         var refreshTokenExpirationDays = int.Parse(ConfigUtil.GetEnvVar(configuration, "Jwt:RefreshTokenExpirationDays"));
         
-        if (issuerSigningKey.Length < minKeyLength) throw new Exception($"Issuer signing key must be at least {minKeyLength} characters long");
+        if (issuerSigningKey.Length < MinKeyLength) throw new Exception($"Issuer signing key must be at least {MinKeyLength} characters long");
         
         services.Configure<AuthConfig>(options =>
         {
@@ -50,5 +50,6 @@ public class AuthConfig
         services.AddAuthorization();
         services.AddTransient<SignInUserService>();
         services.AddTransient<TokenUtil>();
+        services.AddTransient<RefreshUserTokensService>();
     }
 }

@@ -4,6 +4,7 @@ import { BadRequestError, InternalServerError } from './errors';
 import { Logger } from './Logger';
 import { HttpStatusCode } from '@/usecases/common/common/HttpStatusCode';
 import { errorResponseSchema, type ErrorResponseSchema } from '../common';
+import { Formatter } from './Formatter';
 
 type Promisable<T> = T | Promise<T>;
 export type EndpointHandler = (event: RequestEvent) => Promisable<Response>;
@@ -30,22 +31,22 @@ export class Endpoint {
 	};
 
 	private static exceptionHandler = (error: unknown): Response => {
-		let status = HttpStatusCode.InternalServerError;
 		let response: ErrorResponseSchema = {
+			status: HttpStatusCode.InternalServerError,
 			message: 'Internal server error'
 		};
 
 		if (error instanceof BadRequestError) {
-			status = error.status;
+			response.status = error.status;
 			response.message = error.message;
 			response.errors = error.errors;
 		} else if (error instanceof InternalServerError) {
 			Logger.error({ message: error.message, exception: error.childError });
-			status = error.status;
+			error.status = error.status;
 		} else {
 			Logger.error({ message: 'Unhandled error', exception: error });
 		}
-		return Endpoint.jsonResponse(response, { status });
+		return Endpoint.jsonResponse(response, { status: response.status });
 	};
 
 	public static jsonResponse = (o: unknown, options?: ResponseInit): Response => {
@@ -84,7 +85,7 @@ export class Endpoint {
 		responseSchema: T,
 		options?: Omit<RequestInit, 'body'> & { body?: unknown }
 	): Promise<z.infer<T>> => {
-		const body = options?.body ? JSON.stringify(options.body) : undefined;
+		const body = options?.body ? JSON.stringify(Formatter.toSnakeCase(options.body)) : undefined;
 		const response = await fetch(url, {
 			...options,
 			body,
@@ -102,7 +103,7 @@ export class Endpoint {
 
 	private static handleUnexpectedResponse = async (response: Response) => {
 		const data = await response.json();
-		const parsed = errorResponseSchema.safeParse(data);
+		const parsed = errorResponseSchema.omit({ status: true }).safeParse(data);
 		if (!parsed.success)
 			throw new InternalServerError('Unexpected error response from backend', parsed.error);
 		throw new BadRequestError({

@@ -4,6 +4,7 @@ import { errorResponseSchema, HttpStatusCode } from '../common';
 export type ApiResponse<T> = {
 	data?: T;
 	error?: {
+		status: number;
 		message: string;
 		errors?: Record<string, string[] | undefined>;
 	};
@@ -30,9 +31,10 @@ export class ClientRequest {
 			return { data: responseSchema.parse(data) };
 		} else if (HttpStatusCode.isBadRequest(response.status)) {
 			const data = await response.json();
-			const e = errorResponseSchema.parse(data);
+			const e = errorResponseSchema.omit({ status: true }).parse(data);
 			return {
 				error: {
+					status: response.status,
 					message: e.message,
 					errors: e.errors ?? {}
 				}

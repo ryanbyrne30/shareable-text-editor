@@ -1,11 +1,11 @@
 using System.Net;
 using BackendService.Common.Exceptions;
-using BackendService.Services.Users.Repository;
+using BackendService.Common.Repositories;
 using BackendService.Services.Users.Utils;
 
 namespace BackendService.Services.Users.UseCases;
 
-public class VerifyUserPasswordService(UserRepository repository)
+public class VerifyUserPasswordService(AppRepository repository)
 {
     public void VerifyUserPassword(string username, string password)
     {

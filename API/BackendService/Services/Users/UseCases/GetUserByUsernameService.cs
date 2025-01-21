@@ -1,10 +1,10 @@
 using System.Net;
 using BackendService.Common.Exceptions;
-using BackendService.Services.Users.Repository;
+using BackendService.Common.Repositories;
 
 namespace BackendService.Services.Users.UseCases;
 
-public class GetUserByUsernameService(UserRepository userRepository)
+public class GetUserByUsernameService(AppRepository userRepository)
 {
     public sealed record Response(string Id, string Username, DateTime CreatedAt, DateTime? UpdatedAt);
     

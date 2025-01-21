@@ -1,3 +1,4 @@
+using System.Xml;
 using BackendService.Common.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -6,11 +7,13 @@ namespace BackendService.Common.Filters;
 
 public class ValidationFilter: IActionFilter
 {
+    private List<string> _ignoreKeys = ["$", "request"]; 
+    
     public void OnActionExecuting(ActionExecutingContext context)
     {
         if (context.ModelState.IsValid) return;
 
-        var parameters = context.ModelState.Where(ms => ms.Value?.Errors.Count > 0).ToList();
+        var parameters = context.ModelState.Where(ms => ms.Value?.Errors.Count > 0 && !_ignoreKeys.Contains(ms.Key)).ToList();
 
         var errors = new Dictionary<string, List<string>>();
 
