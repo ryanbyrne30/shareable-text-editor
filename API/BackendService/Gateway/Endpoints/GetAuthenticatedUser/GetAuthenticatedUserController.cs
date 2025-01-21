@@ -8,7 +8,9 @@ namespace BackendService.Gateway.Endpoints.GetAuthenticatedUser;
 [ApiController]
 public class GetAuthenticatedUserController(GetUserByUserIdService getUserByUserIdService): ControllerBase
 {
-    [HttpGet("/api/v1/users/me")]
+    public const string Endpoint = "/api/v1/users/me";
+    
+    [HttpGet(Endpoint)]
     public async Task<ActionResult<GetAuthenticatedUserResponse>> GetAuthenticatedUser()
     {
         var userId = Authorize.GetCurrentUserId(HttpContext);

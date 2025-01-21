@@ -9,7 +9,9 @@ namespace BackendService.Gateway.Endpoints.GetUserById;
 [ApiController]
 public class GetUserByIdController(GetUserByUserIdService getUserByUserIdService): ControllerBase
 {
-    [HttpGet("/api/v1/users/{id}")]
+    public const string Endpoint = "/api/v1/users/{id}";
+    
+    [HttpGet(Endpoint)]
     [Authorize]
     public async Task<ActionResult<GetUserByIdResponse>> GetUserById([MaxLength(100)] string id)
     {

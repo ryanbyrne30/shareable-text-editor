@@ -6,7 +6,9 @@ namespace BackendService.Gateway.Endpoints.RefreshUserTokens;
 [ApiController]
 public class RefreshUserTokensController(RefreshUserTokensService refreshUserTokensService): ControllerBase
 {
-    [HttpPost("/api/v1/auth/refresh")]
+    public const string Endpoint = "/api/v1/auth/refresh";
+    
+    [HttpPost(Endpoint)]
     public async Task<ActionResult<RefreshUserTokensResponse>> RefreshUserTokens([FromBody] RefreshUserTokensRequest request)
     {
         var result = await refreshUserTokensService.RefreshUserTokens(request.RefreshToken);

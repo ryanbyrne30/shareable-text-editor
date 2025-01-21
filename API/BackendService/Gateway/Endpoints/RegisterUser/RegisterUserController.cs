@@ -6,7 +6,9 @@ namespace BackendService.Gateway.Endpoints.RegisterUser;
 [ApiController]
 public class RegisterUserController(CreateUserService service): ControllerBase
 {
-    [HttpPost("/api/v1/users")]
+    public const string Endpoint = "/api/v1/auth/register";
+    
+    [HttpPost(Endpoint)]
     public async Task<IActionResult> CreateUser([FromBody] RegisterUserRequest request)
     {
         var createUserRequest = new CreateUserService.Request(request.Username, request.Password);

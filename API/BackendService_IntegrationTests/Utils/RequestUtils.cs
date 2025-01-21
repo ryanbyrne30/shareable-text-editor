@@ -1,4 +1,9 @@
+using System.Net;
+using System.Net.Http.Json;
 using System.Text.Json;
+using BackendService_IntegrationTests.Utils.Mocks;
+using BackendService.Gateway.Endpoints.SignInUser;
+using BackendService.Services.Users.Domain;
 
 namespace BackendService_IntegrationTests.Utils;
 
@@ -12,5 +17,17 @@ public static class RequestUtils
             throw new Exception($"Failed to parse response: {content}");
         return parsed;
     }
-    
+
+    public static async Task<SignInUserResponse> SignIn(HttpClient client, User user)
+    {
+       var request = new
+       {
+          username = user.Username,
+          password = UserMock.Password 
+       };
+       
+       var signInResponse = await client.PostAsJsonAsync(SignInUserController.Endpoint, request);
+       Assert.That(signInResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+       return RequestUtils.ParseResponse<SignInUserResponse>(signInResponse);
+    }
 }

@@ -9,10 +9,14 @@ const expectedResponseSchema = z.object({
 
 export async function handleRegisterUser({ request }: RequestEvent): Promise<Response> {
 	const data = await Endpoint.parseRequest(request, registerUserFormSchema);
-	const serverResponse = await backendServer.sendRequest('/api/v1/users', expectedResponseSchema, {
-		method: 'POST',
-		body: data
-	});
+	const serverResponse = await backendServer.sendRequest(
+		'/api/v1/auth/register',
+		expectedResponseSchema,
+		{
+			method: 'POST',
+			body: data
+		}
+	);
 	const response: RegisterUserResponseSchema = {
 		id: serverResponse.id
 	};

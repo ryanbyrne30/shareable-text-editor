@@ -9,7 +9,6 @@ namespace BackendService_IntegrationTests.Gateway;
 public class SignInUserTest
 {
    private readonly CustomWebApplicationFactory _factory = new();
-   private const string Endpoint = "/api/v1/auth/sign-in";
    
    [TearDown]
    public void TearDown()
@@ -34,7 +33,7 @@ public class SignInUserTest
          Password = UserMock.Password
       };
       
-      var response = await client.PostAsJsonAsync(Endpoint, request);
+      var response = await client.PostAsJsonAsync(SignInUserController.Endpoint, request);
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
       var received = RequestUtils.ParseResponse<SignInUserResponse>(response);
@@ -61,7 +60,7 @@ public class SignInUserTest
          password = "RandomPassword" 
       };
       
-      var response = await client.PostAsJsonAsync(Endpoint, request);
+      var response = await client.PostAsJsonAsync(SignInUserController.Endpoint, request);
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
    }
    
@@ -75,7 +74,7 @@ public class SignInUserTest
          password = "RandomPassword" 
       };
       
-      var response = await client.PostAsJsonAsync(Endpoint, request);
+      var response = await client.PostAsJsonAsync(SignInUserController.Endpoint, request);
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
    }
 }

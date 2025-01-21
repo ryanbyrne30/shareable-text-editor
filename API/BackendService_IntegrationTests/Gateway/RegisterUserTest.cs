@@ -24,7 +24,7 @@ public class CreateUserTests
         var request = new RegisterUserRequest(username, password);
         var client = _factory.CreateClient();
         
-        var createResponse = await client.PostAsJsonAsync("/api/v1/users", request);
+        var createResponse = await client.PostAsJsonAsync(RegisterUserController.Endpoint, request);
         
         Assert.That(createResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         
@@ -55,7 +55,7 @@ public class CreateUserTests
         var request = new RegisterUserRequest(username, password);
         var client = _factory.CreateClient();
         
-        var response = await client.PostAsJsonAsync("/api/v1/users", request);
+        var response = await client.PostAsJsonAsync(RegisterUserController.Endpoint, request);
         
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
@@ -72,7 +72,7 @@ public class CreateUserTests
         var request = new RegisterUserRequest(user.Username, "Pa$$word1");
         var client = _factory.CreateClient();
         
-        var response = await client.PostAsJsonAsync("/api/v1/users", request);
+        var response = await client.PostAsJsonAsync(RegisterUserController.Endpoint, request);
         
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Conflict));
     }
