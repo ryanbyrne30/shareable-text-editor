@@ -1,4 +1,3 @@
-using BackendService.Common.Exceptions;
 using BackendService.Gateway.Utils;
 using BackendService.Services.Users.UseCases;
 using Microsoft.AspNetCore.Mvc;
@@ -13,8 +12,7 @@ public class GetAuthenticatedUserController(GetUserByUserIdService getUserByUser
     [HttpGet(Endpoint)]
     public async Task<ActionResult<GetAuthenticatedUserResponse>> GetAuthenticatedUser()
     {
-        var userId = Authorize.GetCurrentUserId(HttpContext);
-        if (userId == null) throw new UnauthenticatedRequestException();
+        var userId = Authorize.GetRequiredCurrentUserId(HttpContext);
         var user = await getUserByUserIdService.GetUserByUserId(userId);
         return new GetAuthenticatedUserResponse
         {

@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using BackendService_IntegrationTests.Utils.Mocks;
@@ -28,6 +29,9 @@ public static class RequestUtils
        
        var signInResponse = await client.PostAsJsonAsync(SignInUserController.Endpoint, request);
        Assert.That(signInResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-       return RequestUtils.ParseResponse<SignInUserResponse>(signInResponse);
+       
+       var response = ParseResponse<SignInUserResponse>(signInResponse);
+       client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", response.AccessToken);
+       return response;
     }
 }

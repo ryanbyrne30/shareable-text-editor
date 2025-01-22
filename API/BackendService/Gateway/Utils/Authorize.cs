@@ -12,6 +12,13 @@ public static class Authorize
         return context.User.Claims.FirstOrDefault(c => c.Type == IdClaimType)?.Value;
     }
     
+    public static string GetRequiredCurrentUserId(HttpContext context)
+    {
+        var userId = context.User.Claims.FirstOrDefault(c => c.Type == IdClaimType)?.Value;
+        if (userId == null) throw new UnauthorizedRequestException();
+        return userId;
+    }
+    
     public static void AuthorizeUserId(HttpContext context, string id)
     {
         var tokenUserId = GetCurrentUserId(context);

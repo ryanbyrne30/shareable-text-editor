@@ -1,4 +1,5 @@
 using BackendService.Services.Auth.Domain;
+using BackendService.Services.Documents.Domain;
 using BackendService.Services.Users.Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,5 +9,5 @@ public class AppRepository(DbContextOptions options): DbContext(options)
 {
     public DbSet<User> Users { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
-    
+    public DbSet<Document> Documents { get; set; }
 }

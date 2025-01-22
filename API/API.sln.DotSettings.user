@@ -42,5 +42,7 @@
     &lt;TestId&gt;NUnit3x::8AB33980-83B8-44FD-8C7F-F7E7EE6D089D::net9.0::BackendService_IntegrationTests.Gateway.RefreshUserTokensTest.validRequest_shouldReturnOk&lt;/TestId&gt;
     &lt;TestId&gt;NUnit3x::8AB33980-83B8-44FD-8C7F-F7E7EE6D089D::net9.0::BackendService_IntegrationTests.Gateway.RefreshUserTokensTest.invalidRequest_shouldReturnBadRequest&lt;/TestId&gt;
     &lt;TestId&gt;NUnit3x::8AB33980-83B8-44FD-8C7F-F7E7EE6D089D::net9.0::BackendService_IntegrationTests.Gateway.RefreshUserTokensTest&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::8AB33980-83B8-44FD-8C7F-F7E7EE6D089D::net9.0::BackendService_IntegrationTests.Gateway.CreateDocumentTest.validRequest_shouldReturnOk&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::8AB33980-83B8-44FD-8C7F-F7E7EE6D089D::net9.0::BackendService_IntegrationTests.Gateway.CreateDocumentTest&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

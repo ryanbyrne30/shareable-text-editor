@@ -27,5 +27,4 @@ public class RefreshUserTokensService(TokenUtil tokenUtil, AppRepository appRepo
         
         return new Response(accessToken, newRefreshToken);
     }
-    
 }

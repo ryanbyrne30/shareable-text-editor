@@ -2,6 +2,7 @@ using BackendService.Common.Filters;
 using BackendService.Common.Middleware;
 using BackendService.Common.Repositories;
 using BackendService.Services.Auth.Config;
+using BackendService.Services.Documents.Config;
 using BackendService.Services.Users.Config;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,7 @@ builder.Services.AddDbContext<AppRepository>(options => options.UseNpgsql(connec
 
 AuthConfig.Setup(builder.Services, builder.Configuration);
 UsersConfig.Setup(builder.Services);
+DocumentsConfig.Setup(builder.Services);
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
