@@ -5,14 +5,16 @@
 
 	let textarea: HTMLTextAreaElement | null = null;
 	let content: HTMLDivElement | null = null;
-	let text: string = '';
-	let showPreview = false;
-	let orientation: 'horizontal' | 'vertical' = 'vertical';
+	let text: string = $state('');
+	let showPreview = $state(false);
+	let orientation: 'horizontal' | 'vertical' = $state('vertical');
 	let disableContentScroll = false;
 	let disableTextScroll = false;
 	let disableContentScrollTimeout = 0;
 	let disableTextScrollTimeout = 0;
 	let scrollLockTimeoutMs = 500;
+
+	let { data } = $props();
 
 	function render() {
 		if (content === null) return;
@@ -39,7 +41,9 @@
 		return scroll / width;
 	}
 
-	$: text !== undefined && render();
+	$effect(() => {
+		if (text !== undefined) render();
+	});
 
 	onMount(() => {
 		if (!textarea || !content) return;
@@ -81,6 +85,7 @@
 		!showPreview ? 'grid-cols-1 grid-rows-1' : ''
 	)}
 >
+	<h1>Doc: {data.document.name}</h1>
 	<textarea
 		bind:this={textarea}
 		bind:value={text}

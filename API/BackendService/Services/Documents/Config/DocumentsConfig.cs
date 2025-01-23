@@ -7,5 +7,6 @@ public class DocumentsConfig
     public static void Setup(IServiceCollection services)
     {
         services.AddTransient<CreateDocumentService>();
+        services.AddTransient<GetDocumentByIdService>();
     }
 }

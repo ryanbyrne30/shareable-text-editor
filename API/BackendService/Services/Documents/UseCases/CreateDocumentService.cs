@@ -19,6 +19,7 @@ public class CreateDocumentService(AppRepository repository)
         };
 
         await repository.Documents.AddAsync(document);
+        await repository.SaveChangesAsync();
         return id;
     }
 }
