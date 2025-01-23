@@ -11,6 +11,14 @@ export class CookiesService {
 		private nodeEnv: 'production' | 'development'
 	) {}
 
+	public getAccessToken = (cookies: Cookies) => {
+		return cookies.get(this.accessTokenCookie);
+	};
+
+	public getRefreshToken = (cookies: Cookies) => {
+		return cookies.get(this.refreshTokenCookie);
+	};
+
 	public setAccessToken = (cookies: Cookies, token: string) => {
 		cookies.set(this.accessTokenCookie, token, {
 			...this.authTokenConfig(),

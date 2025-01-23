@@ -12,7 +12,7 @@ export async function refreshUserTokens(
 ): Promise<RefreshUserTokensResponseSchema> {
 	const response = await backendServer.sendRequest('/api/v1/auth/refresh', expectedResponseSchema, {
 		method: 'POST',
-		body: { refreshToken }
+		body: { refresh_token: refreshToken }
 	});
 
 	return {

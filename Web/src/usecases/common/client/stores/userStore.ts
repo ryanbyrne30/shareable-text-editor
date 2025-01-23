@@ -2,6 +2,7 @@ import { browser } from '$app/environment';
 import { getCurrentUserRequest } from '@/usecases/getCurrentUser/client';
 import { writable } from 'svelte/store';
 import { z } from 'zod';
+import { HttpStatusCode } from '../../common';
 
 const localStorageKey = 'user';
 
@@ -35,7 +36,12 @@ userStore.subscribe((value) => {
 
 export function updateUserStore() {
 	getCurrentUserRequest().then((res) => {
+		if (res.error && res.error.status === HttpStatusCode.Unauthorized) {
+			userStore.set(null);
+			return;
+		}
 		if (res.error) {
+			console.error('Error when updating user store');
 			console.error(res.error);
 			return;
 		}

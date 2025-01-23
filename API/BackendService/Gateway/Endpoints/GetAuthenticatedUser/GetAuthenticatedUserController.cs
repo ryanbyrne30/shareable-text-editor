@@ -1,5 +1,6 @@
 using BackendService.Gateway.Utils;
 using BackendService.Services.Users.UseCases;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendService.Gateway.Endpoints.GetAuthenticatedUser;
@@ -10,6 +11,7 @@ public class GetAuthenticatedUserController(GetUserByUserIdService getUserByUser
     public const string Endpoint = "/api/v1/users/me";
     
     [HttpGet(Endpoint)]
+    [Authorize]
     public async Task<ActionResult<GetAuthenticatedUserResponse>> GetAuthenticatedUser()
     {
         var userId = Authorize.GetRequiredCurrentUserId(HttpContext);

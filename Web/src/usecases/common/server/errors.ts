@@ -33,6 +33,18 @@ export class BadRequestError extends CustomError {
 	}
 }
 
+export class UnauthorizedRequestError extends BadRequestError {
+	constructor() {
+		super({ message: 'Unauthorized', status: HttpStatusCode.Forbidden });
+	}
+}
+
+export class UnauthenticatedRequestError extends BadRequestError {
+	constructor() {
+		super({ message: 'Unauthenticated', status: HttpStatusCode.Unauthorized });
+	}
+}
+
 export class InternalServerError extends Error {
 	public status: number = HttpStatusCode.InternalServerError;
 	public childError: unknown;

@@ -1,6 +1,11 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import type { z, ZodType } from 'zod';
-import { BadRequestError, InternalServerError } from './errors';
+import {
+	BadRequestError,
+	InternalServerError,
+	UnauthenticatedRequestError,
+	UnauthorizedRequestError
+} from './errors';
 import { Logger } from './Logger';
 import { HttpStatusCode } from '@/usecases/common/common/HttpStatusCode';
 import { errorResponseSchema, type ErrorResponseSchema } from '../common';
@@ -102,6 +107,12 @@ export class Endpoint {
 	};
 
 	private static handleUnexpectedResponse = async (response: Response) => {
+		if (response.status === HttpStatusCode.Forbidden) throw new UnauthorizedRequestError();
+		if (response.status === HttpStatusCode.Unauthorized) throw new UnauthenticatedRequestError();
+		return this.handleUnexpectedJsonResponse(response);
+	};
+
+	private static handleUnexpectedJsonResponse = async (response: Response) => {
 		const data = await response.json();
 		const parsed = errorResponseSchema.omit({ status: true }).safeParse(data);
 		if (!parsed.success)

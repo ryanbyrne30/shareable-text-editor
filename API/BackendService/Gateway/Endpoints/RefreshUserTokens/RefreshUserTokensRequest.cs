@@ -7,6 +7,6 @@ public class RefreshUserTokensRequest
 {
     
     [JsonPropertyName("refresh_token")]
-    [MaxLength(100)]
+    [MaxLength(2048)]
     public required string RefreshToken { get; set; }
 }
