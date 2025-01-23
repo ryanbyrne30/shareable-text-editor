@@ -14,5 +14,5 @@ public class Document
     public required string UserId { get; init; }
     
     [MaxLength(100)]
-    public required string Name { get; init; }
+    public required string Name { get; set; }
 }

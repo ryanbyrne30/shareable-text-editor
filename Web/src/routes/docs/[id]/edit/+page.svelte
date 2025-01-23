@@ -1,4 +1,5 @@
 <script lang="ts">
+	import EditableDocumentName from '@/usecases/updateDocument/client/EditableDocumentName.svelte';
 	import { marked } from 'marked';
 	import { onMount } from 'svelte';
 	import { twMerge } from 'tailwind-merge';
@@ -78,6 +79,9 @@
 		class="rounded-md bg-blue-300 px-4 py-2">Orientation</button
 	>
 </div>
+<div class="p-4">
+	<EditableDocumentName id={data.document.id} defaultValue={data.document.name} />
+</div>
 <main
 	class={twMerge(
 		'grid h-[calc(100dvh-72px)]',
@@ -85,7 +89,6 @@
 		!showPreview ? 'grid-cols-1 grid-rows-1' : ''
 	)}
 >
-	<h1>Doc: {data.document.name}</h1>
 	<textarea
 		bind:this={textarea}
 		bind:value={text}
