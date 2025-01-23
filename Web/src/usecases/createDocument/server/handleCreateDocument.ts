@@ -11,7 +11,10 @@ export async function handleCreateDocument({ cookies }: RequestEvent) {
 	const serverResponse = await backendServer.sendAuthorizedRequest(
 		cookies,
 		'/api/v1/documents',
-		expectedResponseSchema
+		expectedResponseSchema,
+		{
+			method: 'POST'
+		}
 	);
 	const response: CreateDocumentResponseSchema = {
 		id: serverResponse.id
