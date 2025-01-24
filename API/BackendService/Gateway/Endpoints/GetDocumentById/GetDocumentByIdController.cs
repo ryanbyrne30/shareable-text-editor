@@ -18,8 +18,8 @@ public class GetDocumentByIdController(GetDocumentByIdService getDocumentByIdSer
         return new GetDocumentByIdResponse
         {
             Id = document.Id,
-            Name = document.Name
+            Name = document.Name,
+            Content = document.Content
         };
     }
-    
 }

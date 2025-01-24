@@ -9,4 +9,7 @@ public class GetDocumentByIdResponse
     
     [JsonPropertyName("name")]
     public required string Name { get; set; }
+    
+    [JsonPropertyName("content")]
+    public required string Content { get; set; }
 }

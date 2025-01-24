@@ -5,7 +5,8 @@ import type { GetDocumentByIdResponseSchema } from '../common';
 
 const expectedResponseSchema = z.object({
 	id: z.string(),
-	name: z.string()
+	name: z.string(),
+	content: z.string()
 });
 
 export async function serverGetDocumentByIdRequest({
@@ -22,6 +23,7 @@ export async function serverGetDocumentByIdRequest({
 
 	return {
 		id: serverResposne.id,
-		name: serverResposne.name
+		name: serverResposne.name,
+		content: serverResposne.content
 	};
 }

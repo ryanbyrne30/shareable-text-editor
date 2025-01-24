@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
 export const updateDocumentRequestSchema = z.object({
-	name: z.string().optional()
+	name: z.string().optional(),
+	content: z.string().optional()
 });
 export type UpdateDocumentRequestSchema = z.infer<typeof updateDocumentRequestSchema>;
 

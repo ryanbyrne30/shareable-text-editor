@@ -15,7 +15,8 @@ public class CreateDocumentService(AppRepository repository)
         {
             Id = id,
             Name = request.Name,
-            UserId = request.UserId
+            UserId = request.UserId,
+            Content = ""
         };
 
         await repository.Documents.AddAsync(document);

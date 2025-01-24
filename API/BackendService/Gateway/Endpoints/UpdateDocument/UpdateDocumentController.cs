@@ -12,12 +12,11 @@ public class UpdateDocumentController(UpdateDocumentService updateDocumentServic
     [HttpPatch(Endpoint)]
     public async Task<ActionResult<UpdateDocumentResponse>> UpdateDocument([FromRoute] [MaxLength(100)] string id, [FromBody] UpdateDocumentRequest request)
     {
-        var updateRequest = new UpdateDocumentService.Request(id, Name: request.Name);
+        var updateRequest = new UpdateDocumentService.Request(id, Name: request.Name, request.Content);
         await updateDocumentService.UpdateDocument(updateRequest);
         return new UpdateDocumentResponse
         {
             Message = "Ok"
         };
     }
-    
 }
