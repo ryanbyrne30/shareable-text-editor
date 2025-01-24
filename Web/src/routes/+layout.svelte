@@ -4,7 +4,7 @@
 	import { ModeWatcher } from 'mode-watcher';
 	import { updateUserStore, userStore } from '@/usecases/common/client/stores/userStore';
 	import { onMount } from 'svelte';
-	import MobileNav from './MobileNav.svelte';
+	import MainNav from './MainNav.svelte';
 	let { children } = $props();
 
 	const queryClient = new QueryClient();
@@ -13,6 +13,6 @@
 
 <ModeWatcher />
 <QueryClientProvider client={queryClient}>
-	<MobileNav />
+	<MainNav />
 	{@render children()}
 </QueryClientProvider>
