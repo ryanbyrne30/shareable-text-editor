@@ -1,4 +1,4 @@
-import { backendServer, BadRequestError, Endpoint } from '@/usecases/common/server';
+import { backendServer, BadRequestError, Endpoint, Sanitization } from '@/usecases/common/server';
 import type { RequestEvent } from '@sveltejs/kit';
 import { z } from 'zod';
 import { updateDocumentRequestSchema, type UpdateDocumentResponseSchema } from '../common';
@@ -12,6 +12,9 @@ export async function handleUpdateDocument({
 }: RequestEvent): Promise<Response> {
 	const id = params['id'];
 	const body = await Endpoint.parseRequest(request, updateDocumentRequestSchema);
+
+	if (body.content !== undefined) body.content = Sanitization.sanitizeHtml(body.content);
+
 	if (!id) throw new BadRequestError({ message: 'Id not given' });
 	await backendServer.sendAuthorizedRequest(
 		cookies,

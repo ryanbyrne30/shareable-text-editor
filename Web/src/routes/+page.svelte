@@ -43,7 +43,7 @@
 		<ul>
 			{#each $query.data?.data?.documents ?? [] as d}
 				<li>
-					<a href={`/docs/${d.id}/edit`}>
+					<a href={`/docs/${d.id}`}>
 						<p class="border-b p-4">
 							{d.name}
 						</p>
