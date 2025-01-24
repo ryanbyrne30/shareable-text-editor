@@ -1,5 +1,6 @@
 import { HttpStatusCode } from './HttpStatusCode';
+import { DateUtil } from './DateUtil';
+import { EnumUtil } from './EnumUtil';
 
 export * from './response';
-export * from './datatypes';
-export { HttpStatusCode };
+export { HttpStatusCode, DateUtil, EnumUtil };

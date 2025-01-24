@@ -7,6 +7,7 @@
 	import { onMount } from 'svelte';
 	import { Button } from '@/lib/components/interact';
 	import EditableDocumentName from './EditableDocumentName.svelte';
+	import { BasicEditor } from '@/lib/editors/basicEditor';
 
 	let {
 		docId,
@@ -86,10 +87,9 @@
 			</a>
 		</div>
 	</section>
-	<textarea
-		bind:value={content}
+	<BasicEditor
 		{...restprops}
 		{oninput}
 		class="min-h-screen w-full max-w-5xl resize-none border-none bg-input p-4 font-mono outline-none lg:p-28"
-	></textarea>
+	></BasicEditor>
 </div>
