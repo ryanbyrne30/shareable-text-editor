@@ -60,14 +60,16 @@
 </script>
 
 <div class="relative flex w-full flex-col items-center">
-	<section class="sticky top-0 flex w-full flex-row justify-between gap-4 bg-background p-4">
+	<section
+		class="sticky top-0 flex w-full flex-row justify-between gap-4 bg-background py-4 lg:p-4"
+	>
 		<EditableDocumentName id={docId} defaultValue={docName} />
 		<Button
 			onclick={() => {
 				if (docState === 'unsaved') savedocument();
 			}}
 			class={twMerge(
-				'border-none bg-transparent p-0 opacity-70',
+				'border-none bg-transparent p-0 text-foreground opacity-70',
 				docState === 'saving' ? 'animate-pulse' : docState === 'unsaved' ? 'opacity-100' : ''
 			)}
 			disabled={docState !== 'unsaved'}
@@ -78,6 +80,6 @@
 		bind:value={content}
 		{...restprops}
 		{oninput}
-		class="min-h-screen w-full max-w-5xl resize-none border-none bg-primary p-28 font-mono text-primary-foreground outline-none"
+		class="min-h-screen w-full max-w-5xl resize-none border-none bg-input p-4 font-mono outline-none lg:p-28"
 	></textarea>
 </div>

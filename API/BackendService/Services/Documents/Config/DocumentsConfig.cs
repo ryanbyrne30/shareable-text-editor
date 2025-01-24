@@ -9,5 +9,6 @@ public class DocumentsConfig
         services.AddTransient<CreateDocumentService>();
         services.AddTransient<GetDocumentByIdService>();
         services.AddTransient<UpdateDocumentService>();
+        services.AddTransient<GetCurrentUserDocumentsService>();
     }
 }

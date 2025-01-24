@@ -41,7 +41,7 @@
 	onMount(setInputWidth);
 </script>
 
-<div class="relative text-3xl font-medium">
+<div class="relative text-xl font-medium lg:text-3xl">
 	<TextInput
 		bind:me={input}
 		bind:value
@@ -56,9 +56,11 @@
 			input.scrollLeft = 0;
 		}}
 		{...restprops}
-		class="max-w-96 border-2 border-transparent bg-transparent p-0 outline-none hover:border-muted-foreground focus:border-border focus:bg-primary focus:text-primary-foreground"
+		class="max-w-60 overflow-y-scroll border-2 border-transparent bg-transparent p-0 outline-none hover:border-muted-foreground focus:border-border focus:bg-input lg:max-w-96"
 		name="name"
 		maxlength={100}
 	/>
-	<span bind:this={span} class="absolute whitespace-pre text-nowrap opacity-0">{value}</span>
+	<div class="relative overflow-hidden">
+		<span bind:this={span} class="absolute whitespace-pre text-nowrap opacity-0">{value}</span>
+	</div>
 </div>

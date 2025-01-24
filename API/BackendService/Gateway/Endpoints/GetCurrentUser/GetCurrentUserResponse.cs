@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
 
-namespace BackendService.Gateway.Endpoints.GetAuthenticatedUser;
+namespace BackendService.Gateway.Endpoints.GetCurrentUser;
 
-public class GetAuthenticatedUserResponse
+public class GetCurrentUserResponse
 {
     [JsonPropertyName("id")]
     public required string Id { get; set; } 

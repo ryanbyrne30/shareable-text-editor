@@ -74,6 +74,13 @@ export class Endpoint {
 		return parsed.data;
 	};
 
+	public static parseQuery = <T extends ZodType, R = z.infer<T>>(url: URL, schema: T) => {
+		const search = Object.fromEntries(url.searchParams);
+		const parsed = schema.safeParse(search);
+		if (!parsed.success) throw new BadRequestError({ parseError: parsed.error });
+		return parsed.data;
+	};
+
 	public static parseServerResponse = async <T extends ZodType>(
 		response: Response,
 		schema: T

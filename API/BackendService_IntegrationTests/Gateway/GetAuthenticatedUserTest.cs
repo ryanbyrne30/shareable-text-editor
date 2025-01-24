@@ -3,7 +3,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using BackendService_IntegrationTests.Utils;
 using BackendService_IntegrationTests.Utils.Mocks;
-using BackendService.Gateway.Endpoints.GetAuthenticatedUser;
+using BackendService.Gateway.Endpoints.GetCurrentUser;
 using BackendService.Gateway.Endpoints.SignInUser;
 
 namespace BackendService_IntegrationTests.Gateway;
@@ -46,7 +46,7 @@ public class GetAuthenticatedUserTest
        var response = await client.GetAsync(Endpoint);
        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
        
-       var body = RequestUtils.ParseResponse<GetAuthenticatedUserResponse>(response);
+       var body = RequestUtils.ParseResponse<GetCurrentUserResponse>(response);
        Assert.That(body.Id, Is.Not.Null);
        Assert.That(body.Username, Is.Not.Null);
        TestUtils.AssertDatesAreEqual(user.CreatedAt, body.CreatedAt);

@@ -3,20 +3,20 @@ using BackendService.Services.Users.UseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BackendService.Gateway.Endpoints.GetAuthenticatedUser;
+namespace BackendService.Gateway.Endpoints.GetCurrentUser;
 
 [ApiController]
-public class GetAuthenticatedUserController(GetUserByUserIdService getUserByUserIdService): ControllerBase
+public class GetCurrentUserController(GetUserByUserIdService getUserByUserIdService): ControllerBase
 {
     public const string Endpoint = "/api/v1/users/me";
     
     [HttpGet(Endpoint)]
     [Authorize]
-    public async Task<ActionResult<GetAuthenticatedUserResponse>> GetAuthenticatedUser()
+    public async Task<ActionResult<GetCurrentUserResponse>> GetAuthenticatedUser()
     {
         var userId = Authorize.GetRequiredCurrentUserId(HttpContext);
         var user = await getUserByUserIdService.GetUserByUserId(userId);
-        return new GetAuthenticatedUserResponse
+        return new GetCurrentUserResponse
         {
             Id = user.Id,
             Username = user.Username,
