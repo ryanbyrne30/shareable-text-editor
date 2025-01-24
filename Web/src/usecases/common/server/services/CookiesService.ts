@@ -35,19 +35,22 @@ export class CookiesService {
 
 	public removeRefreshToken = (cookies: Cookies) => {
 		cookies.delete(this.refreshTokenCookie, {
-			path: this.authTokenConfig().path
+			...this.authTokenConfig()
 		});
 	};
 
 	public removeAccessToken = (cookies: Cookies) => {
 		cookies.delete(this.accessTokenCookie, {
-			path: this.authTokenConfig().path
+			...this.authTokenConfig()
 		});
 	};
 
 	public removeAuthTokens = (cookies: Cookies) => {
+		console.debug('Removing auth tokens...');
 		this.removeAccessToken(cookies);
 		this.removeRefreshToken(cookies);
+		console.debug('Access token:', this.getAccessToken(cookies));
+		console.debug('Refresh token:', this.getRefreshToken(cookies));
 	};
 
 	private authTokenConfig = (): CookieOptions => {

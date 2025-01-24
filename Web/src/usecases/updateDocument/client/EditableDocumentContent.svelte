@@ -18,10 +18,10 @@
 	}: HTMLTextareaAttributes & { docId: string; docName: string; docContent: string } = $props();
 	let content = $state(docContent ?? '');
 	let debounceMs: number = 3000;
-	let debounceTimer: number = 0;
+	let debounceTimer: NodeJS.Timeout | number = 0;
 	let docState = $state<'saved' | 'unsaved' | 'saving'>('saved');
 	let minSavingMs = 1000;
-	let minSavingTimer: number = 0;
+	let minSavingTimer: NodeJS.Timeout | number = 0;
 
 	const mutation = useMutation(() => updateDocumentRequest(docId, { content }), {
 		onSuccess: () => {
@@ -61,20 +61,30 @@
 
 <div class="relative flex w-full flex-col items-center">
 	<section
-		class="sticky top-0 flex w-full flex-row justify-between gap-4 bg-background py-4 lg:p-4"
+		class="sticky top-0 flex w-full flex-col justify-between gap-4 gap-y-2 bg-background py-4 lg:top-14 lg:flex-row lg:p-4"
 	>
 		<EditableDocumentName id={docId} defaultValue={docName} />
-		<Button
-			onclick={() => {
-				if (docState === 'unsaved') savedocument();
-			}}
-			class={twMerge(
-				'border-none bg-transparent p-0 text-foreground opacity-70',
-				docState === 'saving' ? 'animate-pulse' : docState === 'unsaved' ? 'opacity-100' : ''
-			)}
-			disabled={docState !== 'unsaved'}
-			>{docState === 'saving' ? 'Saving...' : docState === 'unsaved' ? 'Unsaved' : 'Saved'}</Button
-		>
+		<div class="flex flex-row gap-4">
+			<Button
+				onclick={() => {
+					if (docState === 'unsaved') savedocument();
+				}}
+				class={twMerge(
+					'border-none bg-transparent p-0 text-foreground opacity-70',
+					docState === 'saving' ? 'animate-pulse' : docState === 'unsaved' ? 'opacity-100' : ''
+				)}
+				disabled={docState !== 'unsaved'}
+				>{docState === 'saving'
+					? 'Saving...'
+					: docState === 'unsaved'
+						? 'Unsaved'
+						: 'Saved'}</Button
+			>
+
+			<a href={`/docs/${docId}`} class="hidden lg:block">
+				<Button class="w-full">Render</Button>
+			</a>
+		</div>
 	</section>
 	<textarea
 		bind:value={content}

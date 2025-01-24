@@ -26,7 +26,9 @@
 	);
 </script>
 
-<h1>Hello {$userStore?.username ?? 'User'}!</h1>
+<section class="lg:pt-16">
+	<h1>Hello {$userStore?.username ?? 'User'}!</h1>
+</section>
 
 <section class="flex w-dvw flex-col items-center justify-center p-16">
 	<CreateDocumentButton>Create document</CreateDocumentButton>

@@ -14,10 +14,15 @@
 	});
 </script>
 
-<section class="flex flex-row flex-wrap justify-between gap-x-4 gap-y-2 border-b p-4">
+<section class="flex flex-row flex-wrap justify-between gap-x-4 gap-y-2 border-b p-4 lg:pt-16">
 	<h1>{data.document.name}</h1>
-	<a href={`/docs/${data.document.id}/edit`}>
-		<Button>Edit</Button>
+	<a class="hidden lg:block" href={`/docs/${data.document.id}/edit`}>
+		<Button class="w-full">Edit</Button>
 	</a>
 </section>
 <article bind:this={docEl} class="p-4"></article>
+<section class="absolute bottom-0 left-0 right-0 p-2 lg:hidden">
+	<a href={`/docs/${data.document.id}/edit`}>
+		<Button class="w-full">Edit</Button>
+	</a>
+</section>
