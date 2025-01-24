@@ -12,9 +12,9 @@
 	/>
 </main>
 <section
-	class="fixed bottom-0 left-0 right-0 p-2 backdrop-blur-sm backdrop-brightness-75 lg:hidden"
+	class="fixed bottom-0 left-0 right-0 flex flex-row items-center gap-2 p-2 backdrop-blur-sm backdrop-brightness-75 lg:hidden"
 >
-	<a href={`/docs/${data.document.id}`}>
+	<a href={`/docs/${data.document.id}`} class="w-full">
 		<Button class="w-full">Render</Button>
 	</a>
 </section>
