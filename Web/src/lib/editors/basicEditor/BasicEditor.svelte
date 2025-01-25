@@ -3,13 +3,22 @@
 	import { EditorEvent } from './EditorEvent';
 	import { InputHandler } from './InputHandler';
 	import { BasicEditorSocket } from './services/BasicEditorSocket';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { env } from '$env/dynamic/public';
+	import { Dialog } from '@/lib/components/dialog';
 
 	let prevContent: string = '';
 	let textarea: HTMLTextAreaElement | null = null;
-	let { documentId, ...restprops }: HTMLTextareaAttributes & { documentId: string } = $props();
+	let {
+		documentId,
+		documentContent,
+		...restprops
+	}: HTMLTextareaAttributes & { documentId: string; documentContent: string } = $props();
 	let basicEditorSocket: BasicEditorSocket | null = null;
+	let isEditable = $state(false);
+	const disconnectedTimeoutMs = 2000;
+	let disconnectedTimeout: NodeJS.Timeout | number = 0;
+	let showDisconnected = $state(false);
 
 	type TextAreaEvent<T> = T & { currentTarget: EventTarget & HTMLTextAreaElement };
 
@@ -26,13 +35,57 @@
 		if (event) handleEvent(event);
 	}
 
+	function onRemoteMessage(event: EditorEvent) {
+		if (!textarea) return;
+		const currentText = textarea.value ?? '';
+		const updatedText = event.apply(currentText);
+		textarea.value = updatedText;
+	}
+
 	function handleEvent(event: EditorEvent) {
 		basicEditorSocket?.sendBytes(event.toBinary());
 	}
 
+	function onSocketClose() {
+		isEditable = false;
+		basicEditorSocket = createEditor();
+		disconnectedTimeout = setTimeout(() => {
+			showDisconnected = true;
+		}, disconnectedTimeoutMs);
+	}
+
+	function onSocketOpen() {
+		clearTimeout(disconnectedTimeout);
+		showDisconnected = false;
+		isEditable = true;
+	}
+
+	function createEditor(): BasicEditorSocket {
+		const editor = new BasicEditorSocket(env.PUBLIC_DOCUMENT_WEBSOCKET_URL + '/' + documentId);
+		editor.onMessage(onRemoteMessage);
+		editor.onClose(onSocketClose);
+		editor.onOpen(onSocketOpen);
+		return editor;
+	}
+
 	onMount(() => {
-		basicEditorSocket = new BasicEditorSocket(env.PUBLIC_DOCUMENT_WEBSOCKET_URL + '/' + documentId);
+		basicEditorSocket = createEditor();
+	});
+
+	onDestroy(() => {
+		basicEditorSocket?.close();
 	});
 </script>
 
-<textarea bind:this={textarea} {...restprops} {onbeforeinput} {oninput}></textarea>
+<textarea
+	bind:this={textarea}
+	{...restprops}
+	defaultValue={documentContent}
+	readonly={!isEditable}
+	{onbeforeinput}
+	{oninput}
+></textarea>
+
+<Dialog open={showDisconnected}>
+	<div class="rounded bg-background p-4">Disconnected from server. Try refreshing the page.</div>
+</Dialog>

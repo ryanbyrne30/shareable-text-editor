@@ -21,8 +21,10 @@
 		<a class="hidden lg:block" href={`/docs/${data.document.id}/edit`}>
 			<Button class="w-full">Edit</Button>
 		</a>
-		<DeleteDocumentButton documentId={data.document.id} documentName={data.document.name}
-			>Delete</DeleteDocumentButton
+		<DeleteDocumentButton
+			class="hidden lg:block"
+			documentId={data.document.id}
+			documentName={data.document.name}>Delete</DeleteDocumentButton
 		>
 	</div>
 </section>

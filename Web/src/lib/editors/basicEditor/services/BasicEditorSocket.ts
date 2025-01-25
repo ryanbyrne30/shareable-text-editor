@@ -1,9 +1,16 @@
 import { EditorEvent } from '../EditorEvent';
 
+type OnMessageCallback = (event: EditorEvent) => void;
+type Callback = () => void;
+
 export class BasicEditorSocket {
 	private socket: WebSocket;
+	private manuallyClosed = false;
+	private onMessageCallbacks: OnMessageCallback[] = [];
+	private onOpenCallbacks: Callback[] = [];
+	private onCloseCallbacks: Callback[] = [];
 
-	constructor(webSocketUrl: string) {
+	constructor(private webSocketUrl: string) {
 		this.socket = new WebSocket(webSocketUrl);
 		this.setup();
 	}
@@ -11,9 +18,12 @@ export class BasicEditorSocket {
 	private setup = () => {
 		this.socket.addEventListener('open', () => {
 			console.debug('Socket connected');
+			this.onOpenCallbacks.forEach((cb) => cb());
 		});
 		this.socket.addEventListener('close', () => {
 			console.debug('Socket disconnected');
+			if (this.manuallyClosed) return;
+			this.onCloseCallbacks.forEach((cb) => cb());
 		});
 		this.socket.addEventListener('error', (e) => {
 			console.debug('Socket error');
@@ -32,6 +42,18 @@ export class BasicEditorSocket {
 		this.socket.send(message);
 	};
 
+	public onMessage = (cb: OnMessageCallback) => {
+		this.onMessageCallbacks.push(cb);
+	};
+
+	public onOpen = (cb: Callback) => {
+		this.onOpenCallbacks.push(cb);
+	};
+
+	public onClose = (cb: Callback) => {
+		this.onCloseCallbacks.push(cb);
+	};
+
 	private handleMessage = (message: any) => {
 		if (message instanceof ArrayBuffer) {
 			this.handleArrayBufferMessage(message);
@@ -43,12 +65,19 @@ export class BasicEditorSocket {
 			};
 			reader.readAsArrayBuffer(message);
 		} else {
-			console.debug('Socket message:', message);
+			console.error('(unhandled) Socket message:', message);
 		}
 	};
 
 	private handleArrayBufferMessage = (message: ArrayBuffer) => {
 		const event = EditorEvent.parseBinary(message);
-		console.debug(event.toString());
+		this.onMessageCallbacks.forEach((cb) => {
+			cb(event);
+		});
+	};
+
+	public close = () => {
+		this.manuallyClosed = true;
+		this.socket.close();
 	};
 }

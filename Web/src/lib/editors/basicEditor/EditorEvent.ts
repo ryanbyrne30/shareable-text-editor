@@ -53,4 +53,8 @@ export class EditorEvent {
 
 		return event;
 	};
+
+	public apply = (text: string): string => {
+		return text.slice(0, this.pos) + this.insert + text.slice(this.pos + this.delete);
+	};
 }
