@@ -89,6 +89,7 @@
 	</section>
 	<BasicEditor
 		{...restprops}
+		defaultValue={docContent}
 		{oninput}
 		class="min-h-screen w-full max-w-5xl resize-none border-none bg-input p-4 font-mono outline-none lg:p-28"
 	></BasicEditor>
