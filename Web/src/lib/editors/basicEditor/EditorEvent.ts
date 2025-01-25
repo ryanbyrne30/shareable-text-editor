@@ -1,14 +1,20 @@
 export class EditorEvent {
-	public pos: number;
-	public delete: number;
-	public insert: string;
+	public pos: number = 0;
+	public delete: number = 0;
+	public insert: string = '';
 	private encoder = new TextEncoder();
 
-	constructor(text: string | null, startpos: number, endpos: number) {
-		this.pos = startpos;
-		this.delete = endpos - startpos;
-		this.insert = text ?? '';
-	}
+	public static newFromInputEvent = (
+		text: string | null,
+		startpos: number,
+		endpos: number
+	): EditorEvent => {
+		const event = new EditorEvent();
+		event.pos = startpos;
+		event.delete = endpos - startpos;
+		event.insert = text ?? '';
+		return event;
+	};
 
 	public toString = (): string => {
 		return `InputEvent(pos: ${this.pos}, delete: ${this.delete}, insert: ${this.insert})`;
@@ -29,5 +35,22 @@ export class EditorEvent {
 		new Uint8Array(buffer, 12).set(insertBytes);
 
 		return buffer;
+	};
+
+	public static parseBinary = (buffer: ArrayBuffer): EditorEvent => {
+		const decoder = new TextDecoder();
+
+		const pos = new DataView(buffer, 0, 4).getUint32(0);
+		const del = new DataView(buffer, 4, 4).getUint32(0);
+		const textLength = new DataView(buffer, 8, 4).getUint32(0);
+		const textSlice = buffer.slice(12);
+		const text = textLength > 0 ? decoder.decode(textSlice) : '';
+
+		const event = new EditorEvent();
+		event.pos = pos;
+		event.delete = del;
+		event.insert = text;
+
+		return event;
 	};
 }

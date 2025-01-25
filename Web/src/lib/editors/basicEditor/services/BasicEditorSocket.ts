@@ -1,3 +1,5 @@
+import { EditorEvent } from '../EditorEvent';
+
 export class BasicEditorSocket {
 	private socket: WebSocket;
 
@@ -18,20 +20,7 @@ export class BasicEditorSocket {
 			console.error(e);
 		});
 		this.socket.addEventListener('message', (e) => {
-			if (e.data instanceof ArrayBuffer) {
-				const bytes = new Uint8Array(e.data);
-				console.debug('Socket message (bytes):', bytes);
-			} else if (e.data instanceof Blob) {
-				const reader = new FileReader();
-				reader.onload = () => {
-					const arrayBuffer = reader.result as ArrayBuffer;
-					const bytes = new Uint8Array(arrayBuffer);
-					console.debug('Socket message (blob as bytes):', bytes);
-				};
-				reader.readAsArrayBuffer(e.data);
-			} else {
-				console.debug('Socket message:', e.data);
-			}
+			this.handleMessage(e.data);
 		});
 	};
 
@@ -41,5 +30,25 @@ export class BasicEditorSocket {
 
 	public sendBytes = (message: ArrayBuffer) => {
 		this.socket.send(message);
+	};
+
+	private handleMessage = (message: any) => {
+		if (message instanceof ArrayBuffer) {
+			this.handleArrayBufferMessage(message);
+		} else if (message instanceof Blob) {
+			const reader = new FileReader();
+			reader.onload = () => {
+				const arrayBuffer = reader.result as ArrayBuffer;
+				this.handleArrayBufferMessage(arrayBuffer);
+			};
+			reader.readAsArrayBuffer(message);
+		} else {
+			console.debug('Socket message:', message);
+		}
+	};
+
+	private handleArrayBufferMessage = (message: ArrayBuffer) => {
+		const event = EditorEvent.parseBinary(message);
+		console.debug(event.toString());
 	};
 }

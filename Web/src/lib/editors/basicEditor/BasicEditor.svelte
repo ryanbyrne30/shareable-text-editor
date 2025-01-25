@@ -28,7 +28,6 @@
 
 	function handleEvent(event: EditorEvent) {
 		basicEditorSocket?.sendBytes(event.toBinary());
-		console.debug(event.toString());
 	}
 
 	onMount(() => {

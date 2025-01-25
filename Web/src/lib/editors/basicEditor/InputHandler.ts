@@ -23,7 +23,7 @@ export class InputHandler {
 		const curText = e.currentTarget.value;
 		const endpos = startpos + prevContent.length - curText.length;
 
-		return new EditorEvent(text, startpos, endpos);
+		return EditorEvent.newFromInputEvent(text, startpos, endpos);
 	};
 
 	public static onbeforeinput = (
@@ -57,6 +57,6 @@ export class InputHandler {
 			endpos = Math.min(prevContent.length, endpos + 1);
 		}
 
-		return new EditorEvent(text, startpos, endpos);
+		return EditorEvent.newFromInputEvent(text, startpos, endpos);
 	};
 }
