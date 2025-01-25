@@ -47,6 +47,7 @@ using (var scope = app.Services.CreateScope())
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseRouting();
+app.UseWebSockets();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

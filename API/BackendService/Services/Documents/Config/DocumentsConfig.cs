@@ -11,5 +11,6 @@ public class DocumentsConfig
         services.AddTransient<UpdateDocumentService>();
         services.AddTransient<GetCurrentUserDocumentsService>();
         services.AddTransient<DeleteDocumentService>();
+        services.AddTransient<DocumentWebSocketService>();
     }
 }

@@ -21,10 +21,6 @@
 		page = newPage;
 		if (onPageChange) onPageChange(newPage);
 	}
-
-	$effect(() => {
-		console.table({ page, hasMore, hasLess, total, pageSize, currentPage });
-	});
 </script>
 
 <div class="flex w-full flex-row items-center justify-between">

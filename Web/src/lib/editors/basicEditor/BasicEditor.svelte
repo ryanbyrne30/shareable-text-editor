@@ -2,10 +2,14 @@
 	import type { HTMLTextareaAttributes } from 'svelte/elements';
 	import { EditorEvent } from './EditorEvent';
 	import { InputHandler } from './InputHandler';
+	import { BasicEditorSocket } from './services/BasicEditorSocket';
+	import { onMount } from 'svelte';
+	import { env } from '$env/dynamic/public';
 
 	let prevContent: string = '';
 	let textarea: HTMLTextAreaElement | null = null;
-	let { ...restprops }: HTMLTextareaAttributes = $props();
+	let { documentId, ...restprops }: HTMLTextareaAttributes & { documentId: string } = $props();
+	let basicEditorSocket: BasicEditorSocket | null = null;
 
 	type TextAreaEvent<T> = T & { currentTarget: EventTarget & HTMLTextAreaElement };
 
@@ -23,8 +27,12 @@
 	}
 
 	function handleEvent(event: EditorEvent) {
-		console.log(event.toString());
+		basicEditorSocket?.send(event.toString());
 	}
+
+	onMount(() => {
+		basicEditorSocket = new BasicEditorSocket(env.PUBLIC_DOCUMENT_WEBSOCKET_URL + '/' + documentId);
+	});
 </script>
 
 <textarea bind:this={textarea} {...restprops} {onbeforeinput} {oninput}></textarea>
