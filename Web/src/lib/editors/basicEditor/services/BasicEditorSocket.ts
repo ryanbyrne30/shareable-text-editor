@@ -18,11 +18,28 @@ export class BasicEditorSocket {
 			console.error(e);
 		});
 		this.socket.addEventListener('message', (e) => {
-			console.debug('Socket message:', e.data);
+			if (e.data instanceof ArrayBuffer) {
+				const bytes = new Uint8Array(e.data);
+				console.debug('Socket message (bytes):', bytes);
+			} else if (e.data instanceof Blob) {
+				const reader = new FileReader();
+				reader.onload = () => {
+					const arrayBuffer = reader.result as ArrayBuffer;
+					const bytes = new Uint8Array(arrayBuffer);
+					console.debug('Socket message (blob as bytes):', bytes);
+				};
+				reader.readAsArrayBuffer(e.data);
+			} else {
+				console.debug('Socket message:', e.data);
+			}
 		});
 	};
 
 	public send = (message: string) => {
+		this.socket.send(message);
+	};
+
+	public sendBytes = (message: ArrayBuffer) => {
 		this.socket.send(message);
 	};
 }

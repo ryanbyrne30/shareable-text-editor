@@ -46,12 +46,16 @@ export class InputHandler {
 
 		let text = e.data;
 		let startpos = textarea?.selectionStart ?? 0;
-		const endpos = textarea?.selectionEnd ?? 0;
+		let endpos = textarea?.selectionEnd ?? 0;
 
 		if (e.inputType === RawInputEventType.InsertLineBreak) text = '\n';
 
-		if (e.inputType === RawInputEventType.DeleteContentBackward)
+		if (e.inputType === RawInputEventType.DeleteContentBackward && startpos === endpos) {
 			startpos = Math.max(0, startpos - 1);
+		}
+		if (e.inputType === RawInputEventType.DeleteContentForward && startpos === endpos) {
+			endpos = Math.min(prevContent.length, endpos + 1);
+		}
 
 		return new EditorEvent(text, startpos, endpos);
 	};
