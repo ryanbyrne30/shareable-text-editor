@@ -1,4 +1,4 @@
-import { EditorEvent } from '../EditorEvent';
+import { EditorEvent } from '../../../events/EditorEvent';
 
 type OnMessageCallback = (event: EditorEvent) => void;
 type Callback = () => void;

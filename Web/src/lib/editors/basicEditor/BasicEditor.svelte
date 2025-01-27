@@ -1,11 +1,12 @@
 <script lang="ts">
 	import type { HTMLTextareaAttributes } from 'svelte/elements';
-	import { EditorEvent } from './EditorEvent';
+	import { EditorEvent } from '../../events/EditorEvent';
 	import { InputHandler } from './InputHandler';
 	import { BasicEditorSocket } from './services/BasicEditorSocket';
 	import { onDestroy, onMount } from 'svelte';
 	import { env } from '$env/dynamic/public';
 	import { Dialog } from '@/lib/components/dialog';
+	import { Yata } from '@/lib/algorithms/yata';
 
 	let prevContent: string = '';
 	let textarea: HTMLTextAreaElement | null = null;
@@ -19,6 +20,9 @@
 	const disconnectedTimeoutMs = 2000;
 	let disconnectedTimeout: NodeJS.Timeout | number = 0;
 	let showDisconnected = $state(false);
+	const yata = new Yata([]);
+	let yataOut = $state('');
+	let sequence = $state(0);
 
 	type TextAreaEvent<T> = T & { currentTarget: EventTarget & HTMLTextAreaElement };
 
@@ -43,6 +47,15 @@
 	}
 
 	function handleEvent(event: EditorEvent) {
+		for (let i = 0; i < event.delete; i++) {
+			yata.delete(event.pos);
+		}
+		for (let i = 0; i < event.insert.length; i++) {
+			yata.insert(1, event.pos + i, event.insert[i], sequence);
+			sequence += 1;
+		}
+		yataOut = yata.toString();
+
 		basicEditorSocket?.sendBytes(event.toBinary());
 	}
 
@@ -76,6 +89,11 @@
 		basicEditorSocket?.close();
 	});
 </script>
+
+<article>
+	<p>YATA output:</p>
+	{yataOut}
+</article>
 
 <textarea
 	bind:this={textarea}

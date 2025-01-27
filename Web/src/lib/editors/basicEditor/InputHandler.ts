@@ -1,4 +1,4 @@
-import { EditorEvent } from './EditorEvent';
+import { EditorEvent } from '../../events/EditorEvent';
 import { RawInputEventType } from './RawInputEventType';
 
 type TextAreaEvent<T> = T & { currentTarget: EventTarget & HTMLTextAreaElement };
