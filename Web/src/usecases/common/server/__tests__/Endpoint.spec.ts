@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Endpoint, type EndpointHandler, type Middleware } from '../Endpoint';
-import { errorResponseSchema } from '@/usecases/common/common/responses/errorResponse';
+import { errorResponseSchema } from '../../common';
 
 describe('endpoint', () => {
 	it('should run middleware in correct order', async () => {

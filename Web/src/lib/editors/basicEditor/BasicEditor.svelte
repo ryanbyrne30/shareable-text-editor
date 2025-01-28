@@ -21,6 +21,7 @@
 	let disconnectedTimeout: NodeJS.Timeout | number = 0;
 	let showDisconnected = $state(false);
 	const yata = new Yata([]);
+	let replicaId = new Date().getTime();
 	let yataOut = $state('');
 	let sequence = $state(0);
 
@@ -39,11 +40,11 @@
 		if (event) handleEvent(event);
 	}
 
-	function onRemoteMessage(event: EditorEvent) {
+	function onRemoteMessage(event: string) {
 		if (!textarea) return;
-		const currentText = textarea.value ?? '';
-		const updatedText = event.apply(currentText);
-		textarea.value = updatedText;
+		const remoteYata = Yata.parseJson(JSON.parse(event));
+		yata.merge(remoteYata);
+		yataOut = yata.toString();
 	}
 
 	function handleEvent(event: EditorEvent) {
@@ -51,12 +52,12 @@
 			yata.delete(event.pos);
 		}
 		for (let i = 0; i < event.insert.length; i++) {
-			yata.insert(1, event.pos + i, event.insert[i], sequence);
+			yata.insert(replicaId, event.pos + i, event.insert[i], sequence);
 			sequence += 1;
 		}
 		yataOut = yata.toString();
 
-		basicEditorSocket?.sendBytes(event.toBinary());
+		basicEditorSocket?.send(JSON.stringify(yata.toJson()));
 	}
 
 	function onSocketClose() {
@@ -74,7 +75,9 @@
 	}
 
 	function createEditor(): BasicEditorSocket {
-		const editor = new BasicEditorSocket(env.PUBLIC_DOCUMENT_WEBSOCKET_URL + '/' + documentId);
+		const editor = new BasicEditorSocket(
+			env.PUBLIC_DOCUMENT_WEBSOCKET_URL + '/' + documentId + '/p2p'
+		);
 		editor.onMessage(onRemoteMessage);
 		editor.onClose(onSocketClose);
 		editor.onOpen(onSocketOpen);
@@ -97,6 +100,7 @@
 
 <textarea
 	bind:this={textarea}
+	bind:value={yataOut}
 	{...restprops}
 	defaultValue={documentContent}
 	readonly={!isEditable}

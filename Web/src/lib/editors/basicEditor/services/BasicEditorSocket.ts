@@ -1,6 +1,7 @@
 import { EditorEvent } from '../../../events/EditorEvent';
 
-type OnMessageCallback = (event: EditorEvent) => void;
+type OnMessageCallback = (event: string) => void;
+// type OnMessageCallback = (event: EditorEvent) => void;
 type Callback = () => void;
 
 export class BasicEditorSocket {
@@ -65,14 +66,19 @@ export class BasicEditorSocket {
 			};
 			reader.readAsArrayBuffer(message);
 		} else {
-			console.error('(unhandled) Socket message:', message);
+			// console.error('(unhandled) Socket message:', message);
+			this.onMessageCallbacks.forEach((cb) => {
+				cb(message);
+			});
 		}
 	};
 
 	private handleArrayBufferMessage = (message: ArrayBuffer) => {
-		const event = EditorEvent.parseBinary(message);
+		const decoder = new TextDecoder('utf-8');
+		const msg = decoder.decode(message);
+		// const event = EditorEvent.parseBinary(message);
 		this.onMessageCallbacks.forEach((cb) => {
-			cb(event);
+			cb(msg);
 		});
 	};
 

@@ -154,14 +154,15 @@ export class Yata {
 		return seen.contains(id);
 	};
 
-	private integrate = (block: Block) => {
+	public integrate = (block: Block) => {
 		const id = block.id;
 		const last = this.lastSeqNum(id.replicaId);
 
 		// block was sent out of order - out of scope for now - can stash for resolution later
-		if (id.id !== last - 1) throw new Error('Block sent out of order');
+		if (id.id !== last + 1)
+			throw new Error('Block sent out of order: ' + JSON.stringify(block.toJson()));
 		const left = this.findIndexOfBlock(block.originLeft);
-		const right = this.findIndexOfBlock(block.originLeft);
+		const right = this.findIndexOfBlock(block.originRight, this.value.length);
 		const i = this.findInsertIndex(block, false, left, right, left + 1, left + 1);
 		this.value.splice(i, 0, block);
 	};
@@ -175,7 +176,7 @@ export class Yata {
 	};
 
 	private findIndexOfBlock = (blockId: ID | null, def: number = -1) => {
-		if (blockId === null) return -1;
+		if (blockId === null) return def;
 		const idx = this.value.findIndex((b) => b.id.isEqual(blockId));
 		if (idx < 0) return def;
 		return idx;
@@ -210,7 +211,7 @@ export class Yata {
 
 		if (oleft < left || (oleft === left && oright === right && id1 <= id2)) return d;
 		const scan = oleft === left ? id1 <= id2 : scanning;
-		return this.findInsertIndex(block, scan, left, right, d, i + 1);
+		return this.findInsertIndex(block, scan, oleft, oright, d, i + 1);
 	};
 
 	public toString = (): string => {
@@ -228,9 +229,9 @@ export class Yata {
 	public static parseJson = (o: any): Yata => {
 		const data = yataSchema.parse(o);
 		const blocks = data.map((b) => {
-			const id = new ID(b.id.id, b.id.rid);
-			const lid = b.left ? new ID(b.left.id, b.left.rid) : null;
-			const rid = b.right ? new ID(b.right.id, b.right.rid) : null;
+			const id = new ID(b.id.rid, b.id.id);
+			const lid = b.left ? new ID(b.left.rid, b.left.id) : null;
+			const rid = b.right ? new ID(b.right.rid, b.right.id) : null;
 			return new Block(id, lid, rid, b.val);
 		});
 		return new Yata(blocks);
