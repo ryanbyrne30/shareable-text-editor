@@ -1,7 +1,7 @@
 import { z } from 'zod';
-
-const idSchema = z.object({ id: z.number(), rid: z.number() });
-type IDSchema = z.infer<typeof idSchema>;
+import { ID, idSchema } from './ID';
+import { Block } from './Block';
+import { IDSet } from './IDSet';
 
 export const yataSchema = z
 	.object({
@@ -11,69 +11,7 @@ export const yataSchema = z
 		val: z.string().nullable()
 	})
 	.array();
-type YataSchema = z.infer<typeof yataSchema>;
-
-export class ID {
-	constructor(
-		public replicaId: number,
-		public id: number
-	) {}
-
-	public isEqual = (i: ID): boolean => {
-		return this.replicaId === i.replicaId && this.id === i.id;
-	};
-
-	public toJson = (): IDSchema => {
-		return {
-			rid: this.replicaId,
-			id: this.id
-		};
-	};
-}
-
-class IDSet {
-	public value: Map<string, ID> = new Map();
-
-	constructor(ids: ID[] = []) {
-		for (let id of ids) {
-			this.value.set(IDSet.key(id), id);
-		}
-	}
-
-	private static key = (id: ID): string => {
-		return `${id.replicaId}.${id.id}`;
-	};
-
-	public add = (id: ID) => {
-		this.value.set(IDSet.key(id), id);
-	};
-
-	public contains = (id: ID): boolean => {
-		return this.value.has(IDSet.key(id));
-	};
-}
-
-export class Block {
-	constructor(
-		public id: ID,
-		public originLeft: ID | null,
-		public originRight: ID | null,
-		public value: string | null
-	) {}
-
-	public isDeleted = () => {
-		return this.value === null;
-	};
-
-	public toJson = (): YataSchema[number] => {
-		return {
-			id: this.id.toJson(),
-			left: this.originLeft?.toJson() ?? null,
-			right: this.originRight?.toJson() ?? null,
-			val: this.value
-		};
-	};
-}
+export type YataSchema = z.infer<typeof yataSchema>;
 
 export class Yata {
 	constructor(public value: Block[]) {}
@@ -235,5 +173,17 @@ export class Yata {
 			return new Block(id, lid, rid, b.val);
 		});
 		return new Yata(blocks);
+	};
+
+	public version = (): Map<number, number> => {
+		const version = new Map<number, number>();
+
+		for (let block of this.value) {
+			const rid = block.id.replicaId;
+			const value = version.get(rid) ?? 0;
+			version.set(rid, Math.max(value, block.id.id));
+		}
+
+		return version;
 	};
 }
